@@ -1,0 +1,40 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Card from '../components/Card.astro';
+const pageTitle = "About Us";
+const scripts = ["astro", "deno", "svelte"];
+---
+
+<Layout title={pageTitle}>
+    
+	<main>
+        <a href="/">Home</a>
+        <a href="/about/">About</a>
+		<h1>{pageTitle}</h1>
+		<p class="instructions">
+			To get started, open the directory <code>src/pages</code> in your project.<br />
+			<strong>Code Challenge:</strong> Tweak the "Welcome to Astro" message above.
+		</p>
+            <p>Scripts Used</p>
+            <ul>
+                {scripts.map((script) => <li class="skill">{script}</li>)}
+            </ul>
+	</main>
+</Layout>
+
+<style>
+	main {
+		margin: auto;
+		padding: 1.5rem;
+		max-width: 60ch;
+	}
+	h1 {
+		font-size: 3rem;
+		font-weight: 800;
+		margin: 0;
+	}
+    .skill {
+        color: green;
+        font-weight: bold;
+    }
+</style>

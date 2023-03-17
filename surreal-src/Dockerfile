@@ -5,7 +5,7 @@ FROM surrealdb/surrealdb:latest
 EXPOSE 8000
 
 # run
-CMD ["start"]
+CMD ["start", "--user", "root", "--pass", "root", "memory"]
 
 # @TODO: 
 # add necessary commands

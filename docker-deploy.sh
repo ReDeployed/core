@@ -56,6 +56,20 @@ scriptFeedback() {
     esac
 }
 
+dockerClean() {
+    # remove existing
+    if docker ps -a | grep astro >> /dev/null; then
+        scriptFeedback proc "Removing Astro Container.."
+        docker stop astro >> /dev/null
+        docker rm astro >> /dev/null
+    fi
+    if docker ps -a | grep surreal >> /dev/null; then
+        scriptFeedback proc "Removing Surreal Container.."
+        docker stop surreal >> /dev/null
+        docker rm surreal >> /dev/null
+    fi
+}
+
 dockerSetup() {
     # build images
     docker build -t re-surreal:latest ./surreal-src/
@@ -76,6 +90,7 @@ if [ "$selected_choice" == "yes" ]; then
     if ! command -v docker >> /dev/null; then
         scriptFeedback error "Docker not installed!"
     fi
+    dockerClean
     dockerSetup
     if [ $? -eq 0 ]; then
         docker ps

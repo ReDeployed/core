@@ -1,128 +1,91 @@
 <script>
-	let menuItems = [
-	  { name: 'Home', url: '#' },
-	  { name: 'About', url: '#' },
-	  { name: 'Deploy', url: '#' },
-	  { name: 'Contact', url: '#' },
-	];
   </script>
   
   <style>
-	/* Style the navigation bar */
-	.navbar {
-    height: 100vh;
-    background-color: #1e1e1e;
-    color: #fff;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding-left: 2rem;
-    position: fixed;
-    left: -200px; /* Move the navbar off-screen to the left */
-    top: 0;
-    width: 200px;
-    animation: slide-in 0.5s forwards; /* Animate the navbar sliding in */
-  }
+	
+	.left-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 60px;
+  background-color: #1e4b82
+;
+  color: #fff;
+  z-index: 1;
+}
+
+.left-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.left-nav li {
+  position: relative;
+}
+
+.left-nav a {
+  display: block;
+  padding: 12px;
+  text-decoration: none;
   
-	/* Style the menu items */
-	.menu-item {
-    padding: 1rem;
-    text-decoration: none;
-    color: #fff;
-    font-size: 1.2rem;
-    width: calc(100% - 2rem); /* Set the width to 100% minus the padding */
-    box-sizing: border-box; /* Include the padding in the width calculation */
-	border-radius: 20%;
-	text-align: center;
+}
+
+
+
+.left-nav a:hover {
+  background-color: #34495e;
+}
+
+.left-nav ul ul {
+  position: absolute;
+  top: 0;
+  left: 100%;
+  display: none;
+}
+
+.left-nav li:hover > ul {
+  display: block;
+}
+
+.left-nav li a i {
+  display: inline-block;
+  vertical-align: middle;
+  padding-left: 8px;
+}
+
+.left-nav a i {
+    color: #5704b0;
   }
-  
-	.menu-item:hover {
-	  background-color: #555;
-	}
+
+.left-nav li a::before {
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  font-size: 16px;
+  display: inline-block;
+  margin-right: 10px;
+}
+.left-nav li ul li a::before {
+  display: none;
+}
   
 	/* Style the main content area */
-	main {
-	  margin-left: 250px; /* Set the margin to match the width of the navbar */
-	  padding: 1rem;
+	body {
+		margin: 0;
+		padding: 0;
+		background-color: #3B689F;
+		height: 100%;
 	}
 
-	@font-face {
-    font-family: 'MyCustomFont';
-    src: url('core\astro-src\public\fonts\CrampsRegular-OV7od.ttf') format('ttf');
-  }
-
-  h1 {
-    font-family: 'MyCustomFont';
-	font-size: 4em;
-  }
-
-	/* Define the animation */
-	@keyframes slide-in {
-		from {
-		transform: translateX(-200px);
-		}
-		to {
-		transform: translateX(+200px);
-		}
-	}
-
-		.terminal {
+	body {
+    	min-height: 100vh;
+    	background-color: #3B689F;
 		display: flex;
 		flex-direction: column;
-		width: 900px;
-		height: 500px;
-		border-radius: 10px;
-		box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-		background-color: #1e1e1e;
-		color: #fff;
-		font-family: monospace;
-		font-size: 16px;
-		overflow: hidden;
-		}
+    }
 
-		.terminal-header {
-		display: flex;
-		align-items: center;
-		height: 30px;
-		background-color: #333;
-		}
-
-		.terminal-button {
-		width: 10px;
-		height: 10px;
-		border-radius: 50%;
-		margin-right: 10px;
-		}
-
-		.red {
-		margin-left: 1em;
-		background-color: #f44336;
-		}
-
-		.yellow {
-		background-color: #ffeb3b;
-		}
-
-		.green {
-		background-color: #4caf50;
-		}
-
-		.terminal-body {
-		flex: 1;
-		padding: 20px;
-		overflow: auto;
-		}
-
-		.terminal-line {
-		line-height: 1.5;
-		}
-
-		.terminal-line::before {
-		content: '$ ';
-		color: #8bc34a;
-		}
-
-		.terminal-text {
+.terminal-text {
   font-size: 3rem; /* adjust font-size as needed */
   color: #fff;
   text-transform: uppercase;
@@ -131,10 +94,11 @@
   padding: 0.5rem 1rem;
   display: inline-block;
   position: relative;
+  padding-left: 3em;
 }
 
 .terminal-text:before {
-  content: "$";
+  content: "$ ~❯";
   color: #4c4cff;
   margin-right: 0.5rem;
   font-weight: bold;
@@ -161,6 +125,12 @@
   animation: blink 1s infinite;
 }
 
+.add_optionbackground {
+	background-color: #34495e;
+}
+
+
+
 @keyframes blink {
   0% {
     opacity: 0;
@@ -173,33 +143,29 @@
   }
 }
 
-
   </style>
   
-  <div class="navbar">
-	{#each menuItems as item}
-	  <a href="{item.url}" class="menu-item">{item.name}</a>
-	{/each}
-  </div>
-  
-  <main>
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
-	<h1 class="terminal-text">Welcome to ReDeploy Firewall Manager<span class="blinking-underscore">_</span></h1>
-	<div class="terminal">
-		<div class="terminal-header">
-		  <div class="terminal-button red"></div>
-		  <div class="terminal-button yellow"></div>
-		  <div class="terminal-button green"></div>
-		</div>
-		<div class="terminal-body">
-		  <div class="terminal-line">ReDeploy FireWall Manager</div>
-		  <div class="terminal-line">ReDeploy FireWall Manager</div>
-		  <div class="terminal-line">ReDeploy FireWall Manager</div>
-		  <div class="terminal-line">ReDeploy FireWall Manager</div>
-		  <div class="terminal-line">ReDeploy FireWall Manager</div>
-		  <div class="terminal-line">ReDeploy FireWall Manager</div>
-		</div>
+
+  <body>
+	
+	<head>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+	</head>
+	
+	<div class="left-nav"  style="position: fixed; height: 100%;">
+		<ul>
+		  <li><a href="/"><i class="fas fa-home"></i></a></li>
+		  <li><a href="/config"><i class="fas fa-cog"></i></a>
+			<ul class="add_optionbackground">
+			  <li><a href="#"><i class="fas fa-user"></i>Profile</a></li>
+			  <li><a href="#"><i class="fas fa-sliders-h"></i>Pref.</a></li>
+			  <li><a href="#"><i class="fas fa-shield-alt"></i>Security</a></li>
+			</ul>
+		  </li>
+		  <li><a href="/status"><i class="fas fa-exclamation-circle"></i></a></li>
+		</ul>
 	  </div>
-	  
-  </main>
-  
+
+	<h1 class="terminal-text">Welcome to Re:Deploy Firewall Manager<span class="blinking-underscore">_</span></h1>
+
+</body>

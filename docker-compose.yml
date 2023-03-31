@@ -1,0 +1,14 @@
+version: "1.0"
+services:
+  re-astro:
+    build:
+      context: .
+      dockerfile: astro-src/Dockerfile
+    ports:
+      - "127.0.0.1:8080:8085"
+  re-surreal:
+    build:
+      context: .
+      dockerfile: surreal-src/Dockerfile
+    ports:
+      - "127.0.0.1:8000:8000"

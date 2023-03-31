@@ -57,13 +57,8 @@ scriptFeedback() {
 }
 
 dockerSetup() {
-    # build images
-    docker build -t re-surreal:latest ./surreal-src/
-    docker build -t re-astro:latest ./astro-src/
-
-    # run astro and surreal
-    docker run --name astro --restart unless-stopped -d -p 127.0.0.1:8080:8085 re-astro
-    docker run --name surreal --restart unless-stopped -d -p 127.0.0.1:8000:8000 re-surreal
+    # run docker compose
+    docker-compose up
 }
 
 selections=(
@@ -74,14 +69,14 @@ chooseMenu "This script will deploy surrealdb and astro docker containers, conti
 selected_choice ${selections[@]}
 if [ "$selected_choice" == "yes" ]; then
     if ! command -v docker >> /dev/null; then
-        scriptFeedback error "Docker not installed!"
+        scriptFeedback error "docker is not installed!"
+    fi
+    if ! command -v docker-compose >> /dev/null; then
+        scriptFeedback error "docker-compose is not installed!"
     fi
     dockerSetup
-    if [ $? -eq 0 ]; then
-        docker ps
-        scriptFeedback success "Installed Successfully!"
-    else
-        scriptFeedback error "Error during Installation!"
+    if ! [ $? -eq 0 ]; then
+        scriptFeedback success "Exited!"
     fi
 else
     scriptFeedback error "Exiting.."

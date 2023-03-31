@@ -11,7 +11,7 @@ EXPOSE 8085
 USER deno
 
 # add files
-ADD ./dist .
+ADD $PWD/astro-src/dist .
 
 # start deno
 CMD ["deno", "run", "--allow-net", "--allow-read", "--allow-env", "./server/entry.mjs"]

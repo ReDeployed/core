@@ -9,8 +9,7 @@
   left: 0;
   bottom: 0;
   width: 60px;
-  background-color: #1e4b82
-;
+  background-color: #1e4b82;
   color: #fff;
   z-index: 1;
 }
@@ -19,6 +18,11 @@
   list-style: none;
   padding: 0;
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
 }
 
 .left-nav li {
@@ -29,13 +33,10 @@
   display: block;
   padding: 12px;
   text-decoration: none;
-  
 }
 
-
-
 .left-nav a:hover {
-  background-color: #34495e;
+  background-color: #1e1e1e;
 }
 
 .left-nav ul ul {
@@ -50,14 +51,14 @@
 }
 
 .left-nav li a i {
-  display: inline-block;
-  vertical-align: middle;
-  padding-left: 8px;
+  display: block;
+  text-align: center;
+  margin: 0 auto;
 }
 
 .left-nav a i {
-    color: #5704b0;
-  }
+  color: #fff;
+}
 
 .left-nav li a::before {
   font-family: "Font Awesome 5 Free";
@@ -66,10 +67,11 @@
   display: inline-block;
   margin-right: 10px;
 }
+
 .left-nav li ul li a::before {
   display: none;
 }
-  
+
 	/* Style the main content area */
 	body {
 		margin: 0;
@@ -157,9 +159,10 @@
 		  <li><a href="/"><i class="fas fa-home"></i></a></li>
 		  <li><a href="/config"><i class="fas fa-cog"></i></a>
 			<ul class="add_optionbackground">
-			  <li><a href="#"><i class="fas fa-user"></i>Profile</a></li>
-			  <li><a href="#"><i class="fas fa-sliders-h"></i>Pref.</a></li>
-			  <li><a href="#"><i class="fas fa-shield-alt"></i>Security</a></li>
+        
+			  <!-- <li><a href="#"><i class="fas fa-user"></i>Profile</a></li> -->
+			  <!-- <li><a href="#"><i class="fas fa-sliders-h"></i>Pref.</a></li> -->
+			  <!-- <li><a href="#"><i class="fas fa-shield-alt"></i>Security</a></li> -->
 			</ul>
 		  </li>
 		  <li><a href="/status"><i class="fas fa-exclamation-circle"></i></a></li>

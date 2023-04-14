@@ -1,0 +1,23 @@
+---
+alert("Hello World");
+
+const response = await fetch("https://secured-flask-service-v1.azurewebsites.net/api/devices",
+    {
+        method: 'GET',
+        headers: {"Content-Type":"application/json",'Authorization':'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY4MDI1MzM5NCwianRpIjoiZTVlMjk0OGItNThlNi00MTBhLWE2YTctOTE3NzFhODliNDU4IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNjgwMjUzMzk0LCJleHAiOjE2ODAyNTY5OTR9.bLgA3z6yF0XDQ7DdiEsHVat8vuxdMOkLg0h7ojs6q_o'},
+    }
+
+)
+const data = await response.json();
+const randomUser = data.results[0];
+console.log(data);
+console.log(randomUser);
+console.log(response);
+
+---
+<button onclick="response">Anfoch Button</button>
+
+<h1>Fetching information about Devices "WOH"</h1>
+<h2>{randomUser.name} {randomUser.description}</h2>
+
+

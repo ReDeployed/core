@@ -1,0 +1,91 @@
+@BASEURL=https://secured-flask-service-v1.azurewebsites.net/api
+#@BASEURL=http://localhost:5000/api
+
+@ACCESS_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY4MTQ2MjY2MiwianRpIjoiNTUxZDY4YjktMDRiYS00ZjQyLTlhNTQtZmFjZWFmODMxNTMzIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNjgxNDYyNjYyLCJleHAiOjE2ODE0NjYyNjJ9.MbuJeWahS4EDJxuOH4sEoLSdm6daMyN7jvrsK6R0g4s
+@REFRESH_TOKEN=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTYxOTk4Mjc2MSwianRpIjoiNGJkYTk5MmMtZjEzYS00OGQ5LWE2YmEtMjgyZDlkMTcxYzhhIiwibmJmIjoxNjE5OTgyNzYxLCJ0eXBlIjoicmVmcmVzaCIsInN1YiI6MSwiZXhwIjoxNjIyNTc0NzYxfQ.FwcQD7qVBH16m1zCBdXrT5it2IsXJ2Gw_9xbLTdHMKI
+
+
+POST {{BASEURL}}/login
+Content-Type: application/json
+Accept: application/json
+
+{
+  "username": "hugo",
+  "password": "secret"
+}
+
+###
+
+DELETE {{BASEURL}}/logout
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{REFRESH_TOKEN}}
+
+###
+
+POST {{BASEURL}}/register
+Content-Type: application/json
+Accept: application/json
+
+{
+  "username": "leo4",
+  "password": "secret",
+  "passwordConfirmation": "secret"
+}
+
+###
+
+POST {{BASEURL}}/refresh
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{REFRESH_TOKEN}}
+
+
+###
+
+GET {{BASEURL}}/devices
+Accept: application/json
+Authorization: Bearer {{ACCESS_TOKEN}}
+
+###
+
+GET {{BASEURL}}/users/2/devices
+Accept: application/json
+Authorization: Bearer {{ACCESS_TOKEN}}
+###
+
+GET {{BASEURL}}/devices/3
+Accept: application/json
+Authorization: Bearer {{ACCESS_TOKEN}}
+
+
+###
+
+POST {{BASEURL}}/devices
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{ACCESS_TOKEN}}
+
+{
+  "name": "Demo",
+  "description": "blabla",
+  "user_id": 1
+}
+
+###
+
+PUT {{BASEURL}}/devices/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{ACCESS_TOKEN}}
+
+{
+  "name": "fdghdfgh",
+  "description": "gfdgdfgdgfd"
+}
+
+###
+
+DELETE {{BASEURL}}/devices/44
+Accept: application/json
+Authorization: Bearer {{ACCESS_TOKEN}}

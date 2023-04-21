@@ -3,11 +3,17 @@
 const res = await fetch('https://api.sampleapis.com/coffee/hot')
 const data = await res.json()
 ---
-
-<ul>
+<div style={{paddingLeft: "2rem"}}>
+  <ul style={{listStyleType: "none", padding: 0, maxWidth: "100%", overflowX: "hidden"}}>
     {data.map(item => (
-        <li>{item.id}</li>
-        <li>{item.title}</li>
-        <li>{item.description}</li>
-      ))}
-</ul>
+      <li key={item.id} style={{marginBottom: "1rem", borderBottom: "1px solid black", paddingLeft: "1rem"}}>
+        <h3 style={{marginBottom: "0.5rem"}}>{item.title}</h3>
+        <p style={{marginBottom: "0.5rem"}}>{item.description}</p>
+        <p style={{fontSize: "0.8rem", color: "gray"}}>ID: {item.id}</p>
+      </li>
+    ))}
+    {data.length === 0 && (
+      <li>No data found</li>
+    )}
+  </ul>
+</div>

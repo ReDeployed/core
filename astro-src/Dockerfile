@@ -1,17 +1,27 @@
-# pull from nginx latest
+# from deno alpine latest
 FROM denoland/deno:alpine
 
-# change workdir
+# Add npm
+RUN apk update && \
+    apk add npm
+
+# Set working directory
 WORKDIR /app
 
-# The port that your application listens to.
+# Copy initial necessary files to container
+COPY astro-src/package.json .
+COPY astro-src/package-lock.json .
+COPY astro-src/astro.config.mjs .
+
+# Copy all files from src/
+COPY astro-src/src ./src
+
+# Install dependencies and build
+RUN npm install
+RUN npm run build
+
+# The port deno listens on
 EXPOSE 8085
 
-# Prefer not to run as root.
-USER deno
-
-# add files
-ADD $PWD/astro-src/dist .
-
-# start deno
-CMD ["deno", "run", "--allow-net", "--allow-read", "--allow-env", "./server/entry.mjs"]
+# Start deno
+CMD ["npm", "run", "denorun"]

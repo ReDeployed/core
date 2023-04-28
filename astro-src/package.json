@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@astrojs/deno": "^4.1.0",
+    "@astrojs/renderer-svelte": "^0.5.2",
     "@astrojs/svelte": "^2.1.0",
     "astro": "^2.1.2",
     "deno": "^0.1.1",

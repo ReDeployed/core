@@ -6,9 +6,9 @@ services:
       dockerfile: astro-src/Dockerfile
     ports:
       - "127.0.0.1:8080:8085"
+    hostname: "re-astro"
   re-surreal:
     build:
       context: .
       dockerfile: surreal-src/Dockerfile
-    ports:
-      - "127.0.0.1:8000:8000"
+    hostname: "re-surreal"

@@ -1,9 +1,8 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import SvelteSite from '../components/main.svelte'
-import TerminalSvelte from '../components/terminalmain.svelte'
+import ApiComponent from '../components/Api.svelte'
 ---
-
 <Layout title="Welcome to Astro.">
 	<!-- <main>
 		<h1>Welcome to ReDeploy</h1>
@@ -14,11 +13,17 @@ import TerminalSvelte from '../components/terminalmain.svelte'
 	</main> -->
 	<SvelteSite>
 	</SvelteSite>
-	<TerminalSvelte>
-	</TerminalSvelte>
+	<div>
+		<ApiComponent client:visible>
+		</ApiComponent>
+	</div>
 </Layout>
 
 <style>
+
+	div {
+ 		padding-left: 3rem;
+	}
 	main {
 		margin: auto;
 		padding: 1.5rem;

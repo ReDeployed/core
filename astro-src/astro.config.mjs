@@ -6,5 +6,5 @@ import deno from "@astrojs/deno";
 export default defineConfig({
   integrations: [svelte()],
   output: "server",
-  adapter: deno()
+  adapter: deno(),
 });

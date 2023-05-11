@@ -1,0 +1,23 @@
+---
+// test API
+const res = await fetch('https://api.sampleapis.com/coffee/hot')
+const data = await res.json()
+
+---
+<div style={{paddingLeft: "2rem"}}>
+  <ul style={{listStyleType: "none", padding: 0, maxWidth: "100%", overflowX: "hidden"}}>
+    {data.map(item => (
+      <li key={item.id} style={{marginBottom: "1rem", borderBottom: "1px solid black", paddingLeft: "1rem", display: "flex"}}>
+        <img src="../../public/device-image.png" style={{width: "200px", height: "200px", marginRight: "1rem"}} />
+        <div style={{display: "flex", flexDirection: "column"}}>
+          <h3 style={{marginBottom: "0.5rem"}}>{item.title}</h3>
+          <p style={{marginBottom: "0.5rem", height: "100px", overflow: "hidden"}}>{item.description}</p>
+          <p style={{fontSize: "0.8rem", color: "gray"}}>ID: {item.id}</p>
+        </div>
+      </li>
+    ))}
+    {data.length === 0 && (
+      <li>No data found</li>
+    )}
+  </ul>
+</div>

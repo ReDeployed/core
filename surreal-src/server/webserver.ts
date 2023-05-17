@@ -1,123 +1,56 @@
-// Custom Database API
+import { Application, Router, Response } from "https://deno.land/x/oak/mod.ts";
 
-import DatabaseHandler from './handler.js';
 
-const db = new DatabaseHandler();
+import DatabaseHandler from "./handler.js";
 
 const port = 8080;
+const certFile = "./auth/my-ca-certificate.crt";
+const keyFile = "./auth/my-key.pem";
+const alpnProtocols = ["h2", "http/1.1"];
+const file = "webserfer.ts>"
+const app = new Application();
+const db = new DatabaseHandler();
 
-const server = Deno.listen({
-	port: port, 
-});
+const router = new Router();
 
-console.log("Webserver running on " + port);
+// API Functions
+router.get("/", (ctx) => handleRequest(ctx, "/"));
+router.get("/test", (ctx) => handleRequest(ctx, "/test"));
+router.get("/ping", (ctx) => handleRequest(ctx, "/ping"));
 
+app.use(router.routes());
+app.use(router.allowedMethods());
+app.listen({ port, certFile, keyFile, alpnProtocols });
 
-for await (const conn of server) {
-	serveHttp(conn);
-}
+console.log(`${file} Started Webserver`);
 
-async function serveHttp(conn: Deno.Conn) {
-	const httpConn = Deno.serveHttp(conn);
+async function handleRequest(ctx: any, path: string) {
+	const response = new Response();
 
-	for await (const requestEvent of httpConn) {
-		try {
-			const url = new URL(requestEvent.request.url);
-			let response;
-		 
-			switch (url.pathname) {
+	console.log(ctx);
+	console.log(path);
 
-// -------------- Test Functions --------------
+	// -------------- Simple API Functions --------------
 
-// ----- Basic Reply -----
-
-				case "/":
-					response = {message: "API geht 👍"};
-					break;
-
-
-
-// ----- Ping -----
-
-				case "/ping":
-					response = {message: await db.ping()};
-					break;
-
-
-
-// -------------- Database Functions --------------
-
-// ----- read - Get Appliance -----
-
-				case "/read":
-					let identifierGet = url.searchParams.get("id");
-					response = {message: await db.read(identifierGet)};
-					break;
-
-
-
-// ----- readAll - Get All Appliances -----
-
-				case "/readAll":
-					response = {message: await db.readAll()};
-					break;
-
-
-
-// ----- createApp - Create Appliance -----
-				
-				case "/createApp":
-					let idCreateApp = url.searchParams.get("id");
-					let hostname = url.searchParams.get("hostname");
-					let version = url.searchParams.get("version");
-
-					response = {message: await db.createApp(idCreateApp, hostname, version)};
-					break;
-
-
-
-// ----- addVersion - Add Version -----
-
-
-					
-// ----- addRoutes - Add Routes -----
-
-
-
-// ----- addInt - Add Interfaces -----
-				
-
-
-
-// ----- delAll - Delete All Firewall -----
-
-				case "/deleteAll":
-					db.delAll();
-					response = {message: "Deleted All Firewalls"};
-					break;
-
-
-
-// ----- Default  -----
-				
-				default:
-					response = { error: "Unknown Request :(" };
-					break;
-			}
+	switch (path) {
+			case "/":
+				response.body = { message: "API geht 👍" };
+				break;
 			
-			requestEvent.respondWith(
-				new Response(JSON.stringify(response)), {
-					headers: {"Content-Type": "application/json"},
-				}
-			);
-		} catch (error) {
-			requestEvent.respondWith(
-				new Response(JSON.stringify({error: error.message}), {
-					status: 500,
-					headers: {"Content-Type": "application/json"},
-				}
-				)  
-			)
+			case "/test":
+				response.body = { message: "This is the test endpoint" };
+				break;
+
+			case "/ping":
+				response.body = { message: await db.ping() };
+				break;
+
+			default:
+				response.body = { message: "Invalid endpoint" };
+				response.status = 404;
+				break;
 		}
-	}
+	ctx.response.headers.set("Content-Type", "application/json");
+	ctx.response.body = response.body;
+	ctx.response.status = response.status || 200;
 }

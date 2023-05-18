@@ -1,122 +1,94 @@
-// Custom Database API
+import { Application, Router, Response } from "https://deno.land/x/oak/mod.ts";
 
-import DatabaseHandler from './handler.js';
 
-const db = new DatabaseHandler();
+import DatabaseHandler from "./dbHandler.js";
+
+// Filename
+const filePath = import.meta.url;
+const file = filePath.substring(filePath.lastIndexOf('/') + 1);
 
 const port = 8080;
+const certFile = "./auth/ca-certificate.pem";
+const keyFile = "./auth/key.pem";
+const alpnProtocols = ["h2", "http/1.1"];
+const app = new Application();
+const db = new DatabaseHandler();
 
-const server = Deno.listen({
-	port: port, 
-});
+const router = new Router();
 
-console.log("Webserver running on " + port);
+// Call API Functions
+router.get("/", (ctx) => handleRequest(ctx, "/"));
+router.get("/test", (ctx) => handleRequest(ctx, "/test"));
+router.get("/ping", (ctx) => handleRequest(ctx, "/ping"));
+router.get("/addApp", (ctx) => handleRequest(ctx, "/addApp"));
+router.get("/listApp", (ctx) => handleRequest(ctx, "/listApp"));
 
-for await (const conn of server) {
-	serveHttp(conn);
-}
+app.use(router.routes());
+app.use(router.allowedMethods());
+app.listen({ port, certFile, keyFile, alpnProtocols });
 
-async function serveHttp(conn: Deno.Conn) {
-	const httpConn = Deno.serveHttp(conn);
+console.log(`${file} Started Webserver`);
 
-	for await (const requestEvent of httpConn) {
-		try {
-			const url = new URL(requestEvent.request.url);
-			let response;
-		 
-			switch (url.pathname) {
+async function handleRequest(ctx: any, path: string) {
+	const response = new Response();
 
-// -------------- Test Functions --------------
+	// Get the Parameters
+	const queryString = ctx.request.url.search;
 
-// ----- Basic Reply -----
-
-				case "/":
-					response = {message: "API geht 👍"};
-					break;
-
-
-
-// ----- Ping -----
-
-				case "/ping":
-					response = {message: await db.ping()};
-					break;
-
-
-
-// -------------- Database Functions --------------
-
-// ----- read - Get Appliance -----
-
-				case "/read":
-					let identifierGet = url.searchParams.get("id");
-					response = {message: await db.read(identifierGet)};
-					break;
-
-
-
-// ----- readAll - Get All Appliances -----
-
-				case "/readAll":
-					response = {message: await db.readAll()};
-					break;
-
-
-
-// ----- createApp - Create Appliance -----
-				
-				case "/createApp":
-					let idCreateApp = url.searchParams.get("id");
-					let hostname = url.searchParams.get("hostname");
-					let version = url.searchParams.get("version");
-
-					response = {message: await db.createApp(idCreateApp, hostname, version)};
-					break;
-
-
-
-// ----- addVersion - Add Version -----
-
-
-					
-// ----- addRoutes - Add Routes -----
-
-
-
-// ----- addInt - Add Interfaces -----
-				
-
-
-
-// ----- delAll - Delete All Firewall -----
-
-				case "/deleteAll":
-					db.delAll();
-					response = {message: "Deleted All Firewalls"};
-					break;
-
-
-
-// ----- Default  -----
-				
-				default:
-					response = { error: "Unknown Request :(" };
-					break;
-			}
-			
-			requestEvent.respondWith(
-				new Response(JSON.stringify(response)), {
-					headers: {"Content-Type": "application/json"},
-				}
-			);
-		} catch (error) {
-			requestEvent.respondWith(
-				new Response(JSON.stringify({error: error.message}), {
-					status: 500,
-					headers: {"Content-Type": "application/json"},
-				}
-				)  
-			)
-		}
+	// Parse the Parameters
+	const paramsURL = new URLSearchParams(queryString);
+	const params = {};
+	for (const [key, value] of paramsURL.entries()) {
+		params[key] = value;
 	}
+
+// -------------- Simple API Functions --------------
+
+	switch (path) {
+			// API Test
+			case "/":
+				response.body = { message: "API geht 👍" };
+				break;
+			
+			// Test Endpoint
+			case "/test":
+				response.body = { message: "This is the test endpoint" };
+				break;
+
+			// Database Ping
+			case "/ping":
+				response.body = { message: await db.ping() };
+				break;
+
+			// Add Application
+			case "/addApp": 
+				response.body = { message: await db.addApp(
+					params["id"],
+					params["hostname"],
+					params["version"],
+				) }
+				break;
+
+			// List Application
+			case "/listApp":
+				response.body = { message: await db.listApp() };
+				break;
+
+			// Delete Application
+			case "/delApp":
+				break;
+
+			// Delete All 
+			case "/detAll":
+				break;
+
+			// Default Response
+			default:
+				response.body = { message: "Invalid endpoint" };
+				response.status = 404;
+				break;
+		}
+	ctx.response.headers.set("Content-Type", "application/json");
+	ctx.response.body = response.body;
+	ctx.response.status = response.status || 200;
 }

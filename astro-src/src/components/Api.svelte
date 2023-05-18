@@ -10,7 +10,7 @@
     });
 
   </script>
-  
+
 <style>
     .button-container {
     display: flex;
@@ -36,7 +36,7 @@
     background-color: #3e8e41;
   }
 </style>
-  
+
 
 
 <div style="padding-left: 2rem;">
@@ -56,12 +56,3 @@
     {/each}
   </ul>
 </div>
-
-
-
-
-
-
-
-
-  

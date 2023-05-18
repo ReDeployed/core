@@ -1,7 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import SvelteSite from '../components/main.svelte'
-import TerminalSvelte from '../components/terminalmain.svelte'
+import Inputing from '../components/input.svelte'
 ---
 
 <Layout title="Welcome to Astro.">
@@ -14,10 +14,20 @@ import TerminalSvelte from '../components/terminalmain.svelte'
 	</main> -->
 	<SvelteSite>
 	</SvelteSite>
+	<Inputing client:visible>
+	</Inputing>
+
+
+	<!--	
 	<TerminalSvelte></TerminalSvelte>
+ 	-->
 </Layout>
 
 <style>
+
+	div {
+ 		padding-left: 3rem;
+	}
 	main {
 		margin: auto;
 		padding: 1.5rem;

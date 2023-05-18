@@ -1,7 +1,5 @@
 <script>
-  import { validateIpAddress } from './ipAddressValidator.js';
-  import { validateSubnetMask } from './subnetMaskValidator.js';
-  import { validateGateway } from './gatewayValidator.js';
+  import { validateIpAddress, validateSubnetMask, validateGateway } from './InputValidator.js';
 
   let ipAddress = '';
   let subnetMask = '';
@@ -62,7 +60,7 @@
     {#if gatewayValid}
       <p class="valid">Valid Gateway!</p>
     {:else}
-      <p class="invalid">Invalid Gateway or IP address!</p>
+      <p class="invalid">Invalid Gateway or IP-Address/Mask Input!</p>
     {/if}
   {/if}
 </div>

@@ -1,9 +1,14 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import SvelteSite from '../../components/MainPage.svelte'
 
 const { id } = Astro.params;
 ---
 
 <Layout title="API">
-    <h1>{id}</h1>
+    <SvelteSite>
+	</SvelteSite>
+    <div style="padding-left: 10rem;">
+        <h1>Showing Status of Device with Following ID: {id}</h1>
+    </div>
 </Layout>

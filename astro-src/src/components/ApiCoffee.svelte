@@ -24,12 +24,6 @@
 </script>
 
 <style>
-    .button-container {
-        display: flex;
-        flex-direction: column;
-        margin-top: 1rem;
-    }
-
     .buttonfancy {
         background-color: #4caf50;
         border: none;
@@ -49,10 +43,6 @@
         border: none;
         border-radius: 0.25rem;
         font-size: 1rem;
-    }
-
-    .button:hover {
-        background-color: #3e8e41;
     }
 </style>
 

@@ -1,43 +1,49 @@
 <script>
-    import { onMount } from 'svelte';
+    import {onMount} from 'svelte';
 
     let data = [];
     let picture = '/device-images.png'
-    
-    onMount(async () => {
-      const res = await fetch('https://api.sampleapis.com/coffee/hot');
-      data = await res.json();
-    });
 
-  </script>
+    onMount(async () => {
+        const headers = {
+            'Authorization': 'Test',
+            'Content-Type': 'application/json'
+        };
+
+        const options = {
+            headers
+        };
+
+        const res = await fetch('https://api.sampleapis.com/coffee/hot', options);
+        data = await res.json();
+    });
+</script>
 
 <style>
     .button-container {
-    display: flex;
-    flex-direction: column;
-    margin-top: 1rem;
-  }
+        display: flex;
+        flex-direction: column;
+        margin-top: 1rem;
+    }
 
-  .button {
-    background-color: #4caf50;
-    border: none;
-    color: white;
-    padding: 0.5rem 1rem;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 1rem;
-    margin-bottom: 0.5rem;
-    cursor: pointer;
-    border-radius: 0.25rem;
-  }
+    .button {
+        background-color: #4caf50;
+        border: none;
+        color: white;
+        padding: 0.5rem 1rem;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+        cursor: pointer;
+        border-radius: 0.25rem;
+    }
 
-  .button:hover {
-    background-color: #3e8e41;
-  }
+    .button:hover {
+        background-color: #3e8e41;
+    }
 </style>
-
-
 
 <div style="padding-left: 2rem;">
   <ul style="list-style-type: none; padding: 0; max-width: 100%; overflow-x: hidden;">

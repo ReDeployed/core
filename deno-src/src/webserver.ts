@@ -12,7 +12,6 @@ const server = Deno.listen({
 
 console.log("Webserver running on " + port);
 
-
 for await (const conn of server) {
 	serveHttp(conn);
 }

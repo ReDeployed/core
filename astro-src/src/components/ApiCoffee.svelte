@@ -17,16 +17,14 @@
         const res = await fetch('https://api.sampleapis.com/coffee/hot', options);
         data = await res.json();
     });
+
+    function redirectToPage(pageUrl) {
+      window.location.href = pageUrl;
+    }
 </script>
 
 <style>
-    .button-container {
-        display: flex;
-        flex-direction: column;
-        margin-top: 1rem;
-    }
-
-    .button {
+    .buttonfancy {
         background-color: #4caf50;
         border: none;
         color: white;
@@ -38,10 +36,13 @@
         margin-bottom: 0.5rem;
         cursor: pointer;
         border-radius: 0.25rem;
-    }
-
-    .button:hover {
-        background-color: #3e8e41;
+        width: 100px;
+        padding: 0.5rem 1rem;
+        background-color: #333333;
+        color: white;
+        border: none;
+        border-radius: 0.25rem;
+        font-size: 1rem;
     }
 </style>
 
@@ -50,8 +51,8 @@
     {#each data as item (item.id)}
       <li style="margin-bottom: 1rem; border-bottom: 1px solid black; display: flex;" key={item.id}>
         <div style="display: flex; flex-direction: column; align-items: center; margin-right: 1rem; margin-top: 3rem; width: 220px;">
-          <button style="width: 100px; padding: 0.5rem 1rem; background-color: #333333; color: white; border: none; border-radius: 0.25rem; font-size: 1rem; margin-bottom: 0.5rem;">Edit</button>
-          <button style="width: 100px; padding: 0.5rem 1rem; background-color: #333333; color: white; border: none; border-radius: 0.25rem; font-size: 1rem;">Delete</button>
+          <button on:click={() => redirectToPage('/edit/' + item.id)} class="buttonfancy" style="margin-bottom: 0.5rem;">Edit</button>
+          <button on:click={() => redirectToPage('/status/' + item.id)} class="buttonfancy">Status</button>
         </div>
         <div>
           <h3 style="margin-bottom: 0.5rem; max-width: 500px;">{item.title}</h3>

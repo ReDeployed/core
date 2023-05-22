@@ -23,6 +23,7 @@ router.get("/ping", (ctx) => handleRequest(ctx, "/ping"));
 router.get("/addApp", (ctx) => handleRequest(ctx, "/addApp"));
 router.get("/listApp", (ctx) => handleRequest(ctx, "/listApp"));
 router.get("/delApp", (ctx) => handleRequest(ctx, "/delApp"));
+router.get("/chgApp", (ctx) => handleRequest(ctx, "/chgApp"));
 
 
 app.use(router.routes());
@@ -82,6 +83,15 @@ async function handleRequest(ctx: any, path: string) {
 			case "/delApp":
 				response.body = { message: await db.delApp(
 					params["id"],
+				)}
+				break;
+
+			// Change Application
+			case "/chgApp":
+				response.body = { message: await db.chgApp(
+					params["id"],
+					params["field"],
+					params["value"],
 				)}
 				break;
 

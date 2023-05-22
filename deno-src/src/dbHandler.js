@@ -52,6 +52,7 @@ class DatabaseHandler{
 
 			entry = await db.create(`appliance:${id}`, {
 				id: id,
+				updated_at: new Date(),
 				hostname: hostname,
 				version: version,
 			})
@@ -106,9 +107,9 @@ async delApp(
 		await db.use("appliance", "appliance");
 
 		if(id == "") {
-			entry = await db.select("appliance");
+			entry = await db.delete("appliance");
 		} else {
-			entry = await db.select(`appliance:${id}`);
+			entry = await db.delete(`appliance:${id}`);
 		}
 
 		db.close()
@@ -119,6 +120,51 @@ async delApp(
 }
 
 // ------- change applications -------
+
+async chgApp(
+	id = "",
+	field = "",
+	value = "",
+) {
+	console.log(`${file}> chgApp`); // Logging
+	try{
+		let db = new Surreal("http://0.0.0.0:8000/rpc");
+		let entry;
+		await db.signin({
+			user: "root",
+			pass: "root",
+		})
+		await db.use("appliance", "appliance");
+
+			switch(field) {
+				case "id":
+					entry = await db.change(`appliance:${id}`, {
+						id: value,
+						updated_at: new Date(),
+					});
+					break;
+
+				case "hostname":
+					entry = await db.change(`appliance:${id}`, {
+						hostname: value,
+						updated_at: new Date(),
+					});
+					break;
+				
+				case "version":
+					entry = await db.change(`appliance:${id}`, {
+						version: value,
+						updated_at: new Date(),
+					});
+					break;
+			}
+
+		db.close()
+		return entry
+	} catch(e) {
+		return e
+	}
+}
 
 }
 

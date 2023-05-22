@@ -22,6 +22,8 @@ router.get("/test", (ctx) => handleRequest(ctx, "/test"));
 router.get("/ping", (ctx) => handleRequest(ctx, "/ping"));
 router.get("/addApp", (ctx) => handleRequest(ctx, "/addApp"));
 router.get("/listApp", (ctx) => handleRequest(ctx, "/listApp"));
+router.get("/delApp", (ctx) => handleRequest(ctx, "/delApp"));
+
 
 app.use(router.routes());
 app.use(router.allowedMethods());
@@ -71,15 +73,16 @@ async function handleRequest(ctx: any, path: string) {
 
 			// List Application
 			case "/listApp":
-				response.body = { message: await db.listApp() };
+				response.body = { message: await db.listApp(
+					params["id"],
+				) };
 				break;
 
 			// Delete Application
 			case "/delApp":
-				break;
-
-			// Delete All 
-			case "/detAll":
+				response.body = { message: await db.delApp(
+					params["id"],
+				)}
 				break;
 
 			// Default Response

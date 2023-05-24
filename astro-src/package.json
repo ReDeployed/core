@@ -11,7 +11,7 @@
     "denorun": "deno run --allow-net --allow-read --allow-env ./dist/server/entry.mjs"
   },
   "dependencies": {
-    "@astrojs/deno": "^4.1.0",
+    "@astrojs/deno": "^4.1.1",
     "@astrojs/svelte": "^2.1.1",
     "astro": "^2.5.2",
     "deno": "^0.1.1",

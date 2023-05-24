@@ -16,8 +16,8 @@ class DatabaseHandler{
 
 // ------- ping -------
 
-	async ping() {
-		console.log(`${file}> ping`); // Logging
+	async pingDB() {
+		console.log(`${file}> \t pingDB`); // Logging
 		try{
 			let db = new Surreal("http://0.0.0.0:8000/rpc");
 			await db.signin({
@@ -85,6 +85,7 @@ class DatabaseHandler{
 			}
 
 			db.close()
+			console.log(entry);
 			return entry
 		} catch(e) {
 			return e

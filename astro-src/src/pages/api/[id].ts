@@ -15,11 +15,8 @@ function generateAuthToken(fetched_psk : string): string | null {
     const TIMESTAMP = Math.floor(Date.now() / 1000);
 
     if (fetched_psk !== PSK) {
-        console.log('Invalid PSK');
         return null;
     }
-
-    console.log('Valid PSK');
 
     let token = `${PSK}${TIMESTAMP}`;
     token = btoa(token);
@@ -27,80 +24,83 @@ function generateAuthToken(fetched_psk : string): string | null {
 }
 
 export const post: APIRoute = async ({params, request}) => {
-    if (request.headers.get("Content-Type") === "application/json") {
-        const DATA = await request.json();
-        const ID = params.id;
-        let MESSAGE = "";
-        if (POST_ENDPOINTS.includes(ID)) {
-            switch (ID) {
-                case "auth":
-                    MESSAGE = generateAuthToken(DATA.key).toString();
-                    ACCESS_TOKENS["key"] = MESSAGE;
-                    break;
+    const DATA = await request.json();
+    const ID = params.id;
+    let MESSAGE = "";
+    if (POST_ENDPOINTS.includes(ID)) {
+        switch (ID) {
+            case "auth":
+                MESSAGE = generateAuthToken(DATA.key).toString();
+                ACCESS_TOKENS["key"] = MESSAGE;
+                break;
 
-                case "status":
-                    break;
-
-                default:
-                    break;
-            }
-            return new Response(JSON.stringify({msg: MESSAGE}), {
-                status: 200,
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            })
-        } else {
-            return new Response(JSON.stringify({message: "Endpoint not found!"}), {
-                status: 404,
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            })
+            default:
+                break;
         }
+        return new Response(JSON.stringify({
+            type: ID,
+            msg: MESSAGE
+        }), {
+            status: 200,
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+    } else {
+        return new Response(JSON.stringify({message: "Endpoint not found!"}), {
+            status: 404,
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
     }
-    return new Response(null, {status: 400});
 }
 
 export const get: APIRoute = async ({params, request}) => {
     let AUTHORIZED = false;
     const ID = params.id;
-    if (request.headers.get("Content-Type") === "application/json") {
-        const ACC_TOKEN = request
-            .headers
-            .get("Authorization").toString();
+    let MESSAGE = "";
+    const ACC_TOKEN = request
+        .headers
+        .get("Authorization").toString();
 
-        for (const key in ACCESS_TOKENS) {
-            if (ACCESS_TOKENS[key] === ACC_TOKEN) {
-                AUTHORIZED = true;
-                break;
-            }
+    for (const key in ACCESS_TOKENS) {
+        if (ACCESS_TOKENS[key] === ACC_TOKEN) {
+            AUTHORIZED = true;
+            break;
         }
+    }
 
-        if (GET_ENDPOINTS.includes(ID) && AUTHORIZED == true) {
-            switch (ID) {
-                case "status":
-                    
-                    break;
-                case "autho":
-                    break;
+    if (GET_ENDPOINTS.includes(ID) && AUTHORIZED) {
+        switch (ID) {
+            case "status":
+                MESSAGE = "online"
+                break;
 
-                default:
-                    break;
+            case "version":
+                MESSAGE = "v0.0.1-beta"
+                break;
+
+            default:
+                break;
+        }
+        return new Response(JSON.stringify({
+            type: ID,
+            msg: MESSAGE
+        }), {
+            status: 200,
+            headers: {
+                "Content-Type": "application/json"
             }
-            return new Response(JSON.stringify({tag: "v0.0.1-alpha"}), {
-                status: 200,
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            });
-        } else {
+        });
+    } else {
+        if (AUTHORIZED) {
             return new Response(JSON.stringify({message: "Endpoint not found!"}), {
                 status: 404,
                 headers: {
                     "Content-Type": "application/json"
                 }
             })
-        }
+        } else return new Response(null, { status: 403 });
     }
 }

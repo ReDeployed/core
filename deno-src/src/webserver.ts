@@ -1,19 +1,14 @@
 import { Application, Router, Response } from "https://deno.land/x/oak/mod.ts";
-
-
 import DatabaseHandler from "./dbHandler.js";
 
 // Filename
 const filePath = import.meta.url;
 const file = filePath.substring(filePath.lastIndexOf('/') + 1);
 
+// Server
 const port = 8080;
-const certFile = "./auth/ca-certificate.pem";
-const keyFile = "./auth/key.pem";
-const alpnProtocols = ["h2", "http/1.1"];
 const app = new Application();
 const db = new DatabaseHandler();
-
 const router = new Router();
 
 // Call API Functions
@@ -25,7 +20,7 @@ router.get("/listApp", (ctx) => handleRequest(ctx, "/listApp"));
 
 app.use(router.routes());
 app.use(router.allowedMethods());
-app.listen({ port, certFile, keyFile, alpnProtocols });
+app.listen({ port });
 
 console.log(`${file} Started Webserver`);
 

@@ -1,20 +1,53 @@
-import { APIRoute, AstroCookies } from 'astro';
+import { APIRoute } from 'astro';
+
+// API PSK
+// @TODO:
+// Fetch this from database
+const PSK = 'testkey';
 
 const GET_ENDPOINTS = [
     "version",
 ]
 
 const POST_ENDPOINTS = [
-    "info"
+    "auth",
+    "status"
 ]
+
+function generateAuthToken(fetched_psk: string): string | null {
+    const TIMESTAMP = Math.floor(Date.now() / 1000);
+
+    if (fetched_psk !== PSK) {
+      console.log('Invalid PSK');
+      return null;
+    }
+
+    console.log('Valid PSK');
+
+    let token = `${PSK}${TIMESTAMP}`;
+    token = btoa(token);
+    return token;
+}
 
 export const post: APIRoute = async ({ params, request }) => {
     if (request.headers.get("Content-Type") === "application/json") {
-        const id = params.id;
-        if ( POST_ENDPOINTS.includes(id) ) {
+        const DATA = await request.json();
+        const ID = params.id;
+        let MESSAGE = "";
+        if ( POST_ENDPOINTS.includes(ID) ) {
+            switch (ID) {
+                case "auth":
+                    MESSAGE = generateAuthToken(DATA.key).toString();
+                    break;
+
+                case "status":
+                    break;
+
+                default:
+                    break;
+            }
             return new Response(JSON.stringify({
-                endpoint: id,
-                message: id
+                msg: MESSAGE
             }), {
                 status: 200,
                 headers: {

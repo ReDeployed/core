@@ -11,4 +11,4 @@ COPY deno-src/src .
 EXPOSE 8080
 
 # Start 
-CMD ["deno", "run", "--allow-net", "--allow-read", "webserver.ts"]
+CMD ["deno", "run", "--unstable", "--allow-net", "--allow-read", "webserver.ts"]

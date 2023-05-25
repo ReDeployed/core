@@ -4,22 +4,14 @@ import Surreal from "https://deno.land/x/surrealdb/mod.ts";
 // Filename
 const filePath = import.meta.url;
 const file = filePath.substring(filePath.lastIndexOf('/') + 1);
+const DB_URL = 'http://surreal:8000/rpc';
 
-
-
-// ------------- Database Class ------------- //
-
+// Database Handler
 class DatabaseHandler{
-
-
-// -------------- Database Functions --------------
-
-// ------- ping -------
-
 	async ping() {
 		console.log(`${file}> ping`); // Logging
 		try{
-			let db = new Surreal('http://0.0.0.0:8000/rpc');
+			let db = new Surreal(DB_URL);
 			await db.signin({
 				user: 'root',
 				pass: 'root',
@@ -32,9 +24,6 @@ class DatabaseHandler{
 		return "pong"
 	}
 
-
-// ------- add Application -------
-
 	async addApp(
 		id = Math.random().toString(36).substr(2, 10),
 		hostname = "No Hostname",
@@ -42,7 +31,7 @@ class DatabaseHandler{
 	) {
 		console.log(`${file}> addApp`); // Logging
 		try{
-			let db = new Surreal('http://0.0.0.0:8000/rpc');
+			let db = new Surreal(DB_URL);
 			let entry;
 			await db.signin({
 				user: 'root',
@@ -62,14 +51,12 @@ class DatabaseHandler{
 		}
 	}
 
-// ------- ping -------
-
 	async listApp(
 		id = ""
 	) {
 		console.log(`${file}> listApp`); // Logging
 		try{
-			let db = new Surreal('http://0.0.0.0:8000/rpc');
+			let db = new Surreal(DB_URL);
 			let entry;
 			await db.signin({
 				user: 'root',
@@ -88,9 +75,5 @@ class DatabaseHandler{
 
 
 }
-
-
-
-// ------------- Export Database Class ------------- // 
 
 export default DatabaseHandler;

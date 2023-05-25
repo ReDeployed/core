@@ -7,10 +7,8 @@ import EventHandler from "./eventHandler.js";
 const filePath = import.meta.url;
 const file = filePath.substring(filePath.lastIndexOf('/') + 1);
 
+// Server
 const port = 8080;
-const certFile = "./auth/ca-certificate.pem";
-const keyFile = "./auth/key.pem";
-const alpnProtocols = ["h2", "http/1.1"];
 const app = new Application();
 const eventHandler = new EventHandler();
 
@@ -27,7 +25,7 @@ router.get("/chgApp", (ctx) => handleRequest(ctx, "/chgApp"));
 
 app.use(router.routes());
 app.use(router.allowedMethods());
-app.listen({ port, certFile, keyFile, alpnProtocols });
+app.listen({ port });
 
 console.log(`${file} Started Webserver`);
 

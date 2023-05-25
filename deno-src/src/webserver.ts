@@ -1,5 +1,7 @@
 import { Application, Router, Response } from "https://deno.land/x/oak/mod.ts";
-import DatabaseHandler from "./dbHandler.js";
+
+
+import EventHandler from "./eventHandler.js";
 
 // Filename
 const filePath = import.meta.url;
@@ -8,15 +10,18 @@ const file = filePath.substring(filePath.lastIndexOf('/') + 1);
 // Server
 const port = 8080;
 const app = new Application();
-const db = new DatabaseHandler();
+const eventHandler = new EventHandler();
+
 const router = new Router();
 
 // Call API Functions
 router.get("/", (ctx) => handleRequest(ctx, "/"));
 router.get("/test", (ctx) => handleRequest(ctx, "/test"));
-router.get("/ping", (ctx) => handleRequest(ctx, "/ping"));
+router.get("/pingDB", (ctx) => handleRequest(ctx, "/pingDB"));
+router.get("/pingChkp", (ctx) => handleRequest(ctx, "/pingChkp"));
 router.get("/addApp", (ctx) => handleRequest(ctx, "/addApp"));
 router.get("/listApp", (ctx) => handleRequest(ctx, "/listApp"));
+router.get("/chgApp", (ctx) => handleRequest(ctx, "/chgApp"));
 
 app.use(router.routes());
 app.use(router.allowedMethods());
@@ -40,45 +45,87 @@ async function handleRequest(ctx: any, path: string) {
 // -------------- Simple API Functions --------------
 
 	switch (path) {
-			// API Test
+
+// ------- base (/) -------
+
 			case "/":
-				response.body = { message: "API geht 👍" };
+				console.log(`${file}> base`); // Logging
+				response.body = { message: await eventHandler.base() };
 				break;
 			
-			// Test Endpoint
+
+
+// ------- test -------
+
 			case "/test":
-				response.body = { message: "This is the test endpoint" };
+				console.log(`${file}> test`); // Logging
+				response.body = { message: await eventHandler.test() };
 				break;
 
-			// Database Ping
-			case "/ping":
-				response.body = { message: await db.ping() };
+
+
+// ------- ping db -------
+
+			case "/pingDB":
+				console.log(`${file}>  pingDB`); // Logging
+				response.body = { message: await eventHandler.pingDB() };
+				break;
+			
+
+
+// ------- ping chkp -------
+
+			case "/pingChkp":
+				console.log(`${file}> pingChkp`); // Logging
+				response.body = { message: await eventHandler.pingChkp() };
 				break;
 
-			// Add Application
+
+
+// ------- addApp -------
+
 			case "/addApp": 
-				response.body = { message: await db.addApp(
+				console.log(`${file}> addApp`); // Logging
+				response.body = { message: await eventHandler.addApp(
 					params["id"],
 					params["hostname"],
 					params["version"],
 				) }
 				break;
 
-			// List Application
+
+
+// ------- listApp -------
+
 			case "/listApp":
-				response.body = { message: await db.listApp() };
+				console.log(`${file}> listApp`); // Logging
+				response.body = { message: await eventHandler.listApp() };
 				break;
 
-			// Delete Application
+
+
+// ------- delApp -------
+
 			case "/delApp":
+				console.log(`${file}> delApp`); // Logging
+				response.body = { message: await eventHandler.delApp()};
 				break;
 
-			// Delete All 
-			case "/detAll":
+
+
+// ------- chgApp -------
+
+			case "/chgApp":
+				console.log(`${file}> chgApp`); // Logging
+				response.body = { message: await eventHandler.chgApp()};
 				break;
+
+
 
 			// Default Response
+
 			default:
+				console.log(`${file}> default`); // Logging
 				response.body = { message: "Invalid endpoint" };
 				response.status = 404;
 				break;

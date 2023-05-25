@@ -8,15 +8,21 @@ const DB_URL = 'http://surreal:8000/rpc';
 
 // Database Handler
 class DatabaseHandler{
-	async ping() {
-		console.log(`${file}> ping`); // Logging
+
+
+// -------------- Database Functions --------------
+
+// ------- ping -------
+
+	async pingDB() {
+		console.log(`${file}> \t pingDB`); // Logging
 		try{
 			let db = new Surreal(DB_URL);
 			await db.signin({
-				user: 'root',
-				pass: 'root',
+				user: "root",
+				pass: "root",
 			})
-			await db.use('test', 'test');
+			await db.use("test", "test");
 			db.close()
 		} catch(e) {
 			return e
@@ -34,13 +40,14 @@ class DatabaseHandler{
 			let db = new Surreal(DB_URL);
 			let entry;
 			await db.signin({
-				user: 'root',
-				pass: 'root',
+				user: "root",
+				pass: "root",
 			})
-			await db.use('appliance', 'appliance');
+			await db.use("appliance", "appliance");
 
 			entry = await db.create(`appliance:${id}`, {
 				id: id,
+				updated_at: new Date(),
 				hostname: hostname,
 				version: version,
 			})
@@ -51,6 +58,8 @@ class DatabaseHandler{
 		}
 	}
 
+// ------- list applications -------
+
 	async listApp(
 		id = ""
 	) {
@@ -59,20 +68,99 @@ class DatabaseHandler{
 			let db = new Surreal(DB_URL);
 			let entry;
 			await db.signin({
-				user: 'root',
-				pass: 'root',
+				user: "root",
+				pass: "root",
 			})
-			await db.use('appliance', 'appliance');
+			await db.use("appliance", "appliance");
 
-			entry = await db.select('appliance');
+			if(id == "") {
+				entry = await db.select("appliance");
+			} else {
+				entry = await db.select(`appliance:${id}`);
+			}
 
 			db.close()
+			console.log(entry);
 			return entry
 		} catch(e) {
 			return e
 		}
 	}
 
+// ------- delete applications -------
+
+async delApp(
+	id = ""
+) {
+	console.log(`${file}> delApp`); // Logging
+	try{
+		let db = new Surreal(DB_URL);
+		let entry;
+		await db.signin({
+			user: "root",
+			pass: "root",
+		})
+		await db.use("appliance", "appliance");
+
+		if(id == "") {
+			entry = await db.delete("appliance");
+		} else {
+			entry = await db.delete(`appliance:${id}`);
+		}
+
+		db.close()
+		return entry
+	} catch(e) {
+		return e
+	}
+}
+
+// ------- change applications -------
+
+async chgApp(
+	id = "",
+	field = "",
+	value = "",
+) {
+	console.log(`${file}> chgApp`); // Logging
+	try{
+		let db = new Surreal(DB_URL);
+		let entry;
+		await db.signin({
+			user: "root",
+			pass: "root",
+		})
+		await db.use("appliance", "appliance");
+
+			switch(field) {
+				case "id":
+					entry = await db.change(`appliance:${id}`, {
+						id: value,
+						updated_at: new Date(),
+					});
+					break;
+
+				case "hostname":
+					entry = await db.change(`appliance:${id}`, {
+						hostname: value,
+						updated_at: new Date(),
+					});
+					break;
+				
+				case "version":
+					entry = await db.change(`appliance:${id}`, {
+						version: value,
+						updated_at: new Date(),
+					});
+					break;
+			}
+
+		db.close()
+		return entry
+	} catch(e) {
+		return e
+	}
+}
 
 }
 

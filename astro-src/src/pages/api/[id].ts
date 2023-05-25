@@ -3,14 +3,13 @@ import {APIRoute} from 'astro';
 // API PSK
 // @TODO: Fetch this from database
 const PSK = 'testkey';
-const GET_ENDPOINTS = ["version"]
-let AUTHORIZED = false;
+const GET_ENDPOINTS = ["version", "status"]
 
 const ACCESS_TOKENS: {
     [key: string]: string
 } = {};
 
-const POST_ENDPOINTS = ["auth", "status"]
+const POST_ENDPOINTS = ["auth"]
 
 function generateAuthToken(fetched_psk : string): string | null {
     const TIMESTAMP = Math.floor(Date.now() / 1000);
@@ -64,20 +63,21 @@ export const post: APIRoute = async ({params, request}) => {
 }
 
 export const get: APIRoute = async ({params, request}) => {
+    let AUTHORIZED = false;
+    const ID = params.id;
     if (request.headers.get("Content-Type") === "application/json") {
         const ACC_TOKEN = request
             .headers
-            .get("Authorization");
+            .get("Authorization").toString();
+
         for (const key in ACCESS_TOKENS) {
             if (ACCESS_TOKENS[key] === ACC_TOKEN) {
                 AUTHORIZED = true;
                 break;
             }
         }
-        
-        const ID = params.id;
+
         if (GET_ENDPOINTS.includes(ID) && AUTHORIZED == true) {
-            AUTHORIZED = false;
             switch (ID) {
                 case "status":
                     

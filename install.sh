@@ -3,7 +3,7 @@
 # constants
 REPO_URL="https://github.com/ReDeployed/core"
 RUN_DIR="$PWD"
-DEP_INSTALL=0
+DEP_INSTALL=false
 
 # modified version of https://askubuntu.com/a/1386907
 chooseMenu() {
@@ -78,26 +78,27 @@ checkDeps() {
     if command -v /bin/docker >> /dev/null; then
         IS_ACTIVE="$(systemctl --user is-active docker)"
         scriptFeedback proc "docker found and $IS_ACTIVE!"
-        if command -v /bin/docker-compose >> /dev/null; then
+    else
+        scriptFeedback proc "docker not installed!"
+        if $DEP_INSTALL; then
+            scriptFeedback proc "Installing..."
+            $SU_SYS /bin/apt install docker.io -y  > /dev/null 2>&1
+        else
+            scriptFeedback error "missing dependencies!"
+        fi
+    fi
+    # docker-compose
+    if command -v /bin/docker-compose >> /dev/null; then
             scriptFeedback proc "docker-compose found!"
         else
             scriptFeedback proc "docker-compose not installed!"
             if $DEP_INSTALL; then
                 scriptFeedback proc "Installing..."
-                /bin/apt install docker-compose -y
+                $SU_SYS /bin/apt install docker-compose -y  > /dev/null 2>&1
             else
                 scriptFeedback error "missing dependencies!"
             fi
         fi
-    else
-        scriptFeedback proc "docker not installed!"
-        if $DEP_INSTALL; then
-            scriptFeedback proc "Installing..."
-            /bin/apt install docker -y
-        else
-            scriptFeedback error "missing dependencies!"
-        fi
-    fi
     # git
     if command -v /bin/git >> /dev/null; then
         scriptFeedback proc "git found!"
@@ -105,7 +106,7 @@ checkDeps() {
         scriptFeedback proc "git not installed!"
         if $DEP_INSTALL; then
             scriptFeedback proc "Installing..."
-            /bin/apt install git -y
+            $SU_SYS /bin/apt install git -y  > /dev/null 2>&1
         else
             scriptFeedback error "missing dependencies!"
         fi
@@ -113,23 +114,38 @@ checkDeps() {
 }
 
 prepareEnv() {
+    scriptFeedback proc "Creating App Folder..."
     # make dir
-    $SUS_SYS mkdir -p /opt/reDeploy
-    cd /opt/redeploy
+    $SU_SYS mkdir -p /opt/reDeploy
+    $SU_SYS rm -rf /opt/reDeploy/*
+    cd /opt/reDeploy
     # clone repo
-    /bin/git clone "$REPO_URL"
-    cd echo $(echo $REPO_URL | rev | cut -d '/' -f 1 | rev)
-    # go back
-    cd $RUN_DIR
+    $SU_SYS /bin/git clone "$REPO_URL" > /dev/null 2>&1
+}
+
+doSSL() {
+    scriptFeedback proc "Creating SSL certificate..."
+    cd "/opt/reDeploy/core/proxy/ssl"
+    # create a new self signed cert
+    $SU_SYS /bin/openssl req -x509 \
+        -nodes -days 365 \
+        -newkey rsa:2048 \
+        -keyout server.key \
+        -out server.crt \
+        -subj "/CN=redeploy.local" \
+    > /dev/null 2>&1
 }
 
 doDocker() {
+    # go to dir
+    cd "/opt/reDeploy/core/proxy/ssl"
     # enable services
     scriptFeedback proc "Setting up docker..."
-    /bin/systemctl enable docker
-    /bin/systemctl start docker
+    $SU_SYS /bin/systemctl enable docker
+    $SU_SYS /bin/systemctl start docker
     # docker compose things
-    /bin/docker-compose up -d --build --pull "always"
+    scriptFeedback proc "Building docker stack..."
+    $SU_SYS /bin/docker-compose up -d --build > /dev/null 2>&1
 }
 
 # detect su system
@@ -153,34 +169,28 @@ chooseMenu "Install missing things automatically?" selected_choice ${selections[
 # proceed accordingly
 case $selected_choice in
     "yes")
-        DEP_INSTALL=1
-        /bin/apt update
+        DEP_INSTALL=true
+        scriptFeedback proc "Updating Package Repos..."
+        $SU_SYS /bin/apt update > /dev/null 2>&1
         ;;
     "no")
-        DEP_INSTALL=0
+        DEP_INSTALL=false
         ;;
 esac
 
+# check deps
 checkDeps
+# recheck if we installed
+if $DEP_INSTALL; then
+    checkDeps
+fi
 
-# start selection here
-selections=(
-    "no"
-    "yes"
-)
-chooseMenu "Proceed with install?" selected_choice ${selections[@]}
+# proceed with main install
+scriptFeedback proc "Starting..."
+prepareEnv
+doSSL
+doDocker
 
-# proceed accordingly
-case $selected_choice in
-    "yes")
-        scriptFeedback proc "Starting..."
-        prepareEnv
-        doDocker
-        ;;
-    "no")
-        exit 0
-        ;;
-esac
-
+# done
 scriptFeedback success "All Done!"
 exit 0

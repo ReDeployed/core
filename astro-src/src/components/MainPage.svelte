@@ -165,7 +165,9 @@
 			  <!-- <li><a href="#"><i class="fas fa-shield-alt"></i>Security</a></li> -->
 			</ul>
 		  </li>
-		  <li><a href="/deploy"><i class="fas fa-exclamation-circle"></i></a></li>
+		  <li><a href="/deploy"><i class="fas fa-code"></i></a></li>
+      <li><a href="/settings"><i class="fas fa-key"></i></a></li>
+      
 		</ul>
 	  </div>
 

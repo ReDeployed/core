@@ -1,8 +1,9 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import SvelteSite from '../components/MainPage.svelte'
-import ApiComponent from '../components/ApiDatabase.svelte'
+import Settings from '../components/Settings.svelte'
 ---
+
 <Layout title="Welcome to Astro.">
 	<!-- <main>
 		<h1>Welcome to ReDeploy</h1>
@@ -13,17 +14,14 @@ import ApiComponent from '../components/ApiDatabase.svelte'
 	</main> -->
 	<SvelteSite>
 	</SvelteSite>
-	<div>
-		<ApiComponent client:visible>
-		</ApiComponent>
-	</div>
+	<Settings client:visible>
+	</Settings>
 </Layout>
 
-<style>
 
-	div {
- 		padding-left: 3rem;
-	}
+
+
+<style>
 	main {
 		margin: auto;
 		padding: 1.5rem;
@@ -67,3 +65,5 @@ import ApiComponent from '../components/ApiDatabase.svelte'
 		padding: 0;
 	}
 </style>
+
+

@@ -4,11 +4,7 @@ import Surreal from "https://deno.land/x/surrealdb@v0.7.3/mod.ts";
 import Security from "./encryption.ts"
 
 const sec = new Security();
-<<<<<<< HEAD
-const DB_URL = 'http://127.0.0.1:8000/rpc'
-=======
 const DB_URL = 'http://surreal:8000/rpc'
->>>>>>> master
 
 // ------------- Database Class ------------- //
 

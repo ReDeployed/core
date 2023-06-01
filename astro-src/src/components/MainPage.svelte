@@ -1,4 +1,16 @@
 <script>
+
+    let isConfigHovered = false;
+  let isAddHovered = false;
+
+  function toggleConfigHover() {
+    isConfigHovered = !isConfigHovered;
+  }
+
+  function toggleAddHover() {
+    isAddHovered = !isAddHovered;
+  }
+
   </script>
   
   <style>
@@ -145,6 +157,27 @@
   }
 }
 
+.left-nav ul ul {
+    position: absolute;
+    top: 0;
+    left: 100%;
+    display: none;
+  }
+
+
+  .add_optionbackground {
+    background-color: #34495e;
+  }
+
+  .left-nav li:nth-child(2):hover a i.fas.fa-cog,
+  .left-nav li:nth-child(2):hover ul.add_optionbackground,
+  .left-nav li:nth-child(2).visible a i.fas.fa-cog,
+  .left-nav li:nth-child(2).visible ul.add_optionbackground,
+  .left-nav li:nth-child(2).visible a i.fas.fa-cog,
+  .left-nav li:nth-child(2).visible ul.add_optionbackground:hover {
+    color: #fff;
+  }
+
   </style>
   
 
@@ -154,20 +187,21 @@
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
 	</head>
 	
-	<div class="left-nav"  style="position: fixed; height: 100%;">
-		<ul>
-		  <li><a href="/"><i class="fas fa-home"></i></a></li>
-		  <li><a href="/config"><i class="fas fa-cog"></i></a>
-			<ul class="add_optionbackground">
-        
-			  <!-- <li><a href="#"><i class="fas fa-user"></i>Profile</a></li> -->
-			  <!-- <li><a href="#"><i class="fas fa-sliders-h"></i>Pref.</a></li> -->
-			  <!-- <li><a href="#"><i class="fas fa-shield-alt"></i>Security</a></li> -->
-			</ul>
-		  </li>
-		  <li><a href="/deploy"><i class="fas fa-exclamation-circle"></i></a></li>
-		</ul>
-	  </div>
+	<div class="left-nav" style="position: fixed; height: 100%;">
+  <ul>
+    <li><a href="/"><i class="fas fa-home"></i></a></li>
+    <li>
+      <a href="/config" on:mouseenter={toggleConfigHover} on:mouseleave={toggleConfigHover}>
+        <i class="fas fa-cog" class:darkened={isConfigHovered || isAddHovered}></i>
+      </a>
+      <ul class="add_optionbackground" class:visible={isConfigHovered || isAddHovered} on:mouseenter={toggleAddHover} on:mouseleave={toggleAddHover}>
+        <li><a href="#"><i class="fas fa-plus"></i></a></li>
+      </ul>
+    </li>
+    <li><a href="/deploy"><i class="fas fa-code"></i></a></li>
+    <li><a href="/settings"><i class="fas fa-key"></i></a></li>
+  </ul>
+</div>
 
 	<h1 class="terminal-text">Welcome to Re:Deploy Firewall Manager<span class="blinking-underscore">_</span></h1>
 

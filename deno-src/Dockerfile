@@ -7,8 +7,5 @@ WORKDIR /app
 # Copy the source to the container
 COPY deno-src/src .
 
-# Expose a port (change it to the appropriate port number)
-EXPOSE 8080
-
 # Start 
-CMD ["deno", "run", "--allow-net", "--allow-read", "webserver.ts"]
+CMD ["deno", "run", "--unstable", "--allow-net", "--allow-read", "webserver.ts"]

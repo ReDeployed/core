@@ -32,11 +32,6 @@ router.get("/delToken", (ctx) => handleRequest(ctx, "/delToken"));
 router.get("/testToken", (ctx) => handleRequest(ctx, "/testToken"));
 router.get("/auth", (ctx) => handleRequest(ctx, "/auth"));
 
-
-
-app.use(oakCors({
-    origin: '*',
-}))
 app.use(router.routes());
 app.use(router.allowedMethods());
 app.listen({ port, alpnProtocols });

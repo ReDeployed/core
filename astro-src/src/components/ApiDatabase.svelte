@@ -1,19 +1,17 @@
 <script>
   import { onMount } from "svelte";
 
-  let data = [];
   let isLoading = true;
-  let picture = "/device-images.png";
+  let data = [];
 
   onMount(async () => {
     try {
-      const res = await fetch("http://127.0.0.1:8080/listApp", {
-        mode: "no-cors",
+      const res = await fetch("https://localhost:8080/listApp", {
+        mode: "cors",
         method: "GET",
-        headers: { "Content-Type": "application/json" },
       });
-      if (res.ok) {
-        data = await res.json();
+      if (res.status == 200) {
+        data = await res.json()
       } else {
         console.error("Failed to fetch data from the API.");
       }
@@ -33,12 +31,12 @@
   <div class="loading-circle">
     <div class="loading-spinner" />
   </div>
-{:else if data.length > 0}
+{:else if data['message'].length > 0}
   <div style="padding-left: 2rem;">
     <ul
       style="list-style-type: none; padding: 0; max-width: 100%; overflow-x: hidden;"
     >
-      {#each data as item (item.id)}
+      {#each data['message'] as item}
         <li
           style="margin-bottom: 1rem; border-bottom: 1px solid black; display: flex;"
           key={item.id}

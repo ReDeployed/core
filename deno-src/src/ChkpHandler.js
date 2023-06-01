@@ -6,22 +6,21 @@ class ChkpHandler{
         ip, user, pass
     ) {
         try {
-            const CHKP_SID = await fetch(`https://${ip}:443/gaia_api/login`, {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                  user: user,
-                  password: pass
-                })
-              })
-                .then(response => response.json())
-                .then(data => data.sid)
-                .then(sid => sid.replace(/"/g, ''))
-                .then(sid => console.log(sid));
+            let chkpSid = await fetch(`https://${ip}:443/gaia_api/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                user: user,
+                password: pass
+            })
+            })
 
-            return CHKP_SID;
+            chkpSid = await chkpSid.json();
+            console.log(chkpSid['sid']);
+            return chkpSid['sid'];
+
 
         } catch (error) {
             console.log('Error:', error);
@@ -54,7 +53,7 @@ class ChkpHandler{
             return VERSION;
 
         } catch (error) {
-            console.log('Error:', error);
+            console.log(error);
             return null;
         }
     }

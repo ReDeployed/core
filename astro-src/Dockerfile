@@ -20,8 +20,5 @@ COPY astro-src/src ./src
 RUN npm install
 RUN npm run build
 
-# The port deno listens on
-EXPOSE 8085
-
 # Start deno
 CMD ["npm", "run", "denorun"]

@@ -1,5 +1,5 @@
 import { Application, Router, Response } from "https://deno.land/x/oak/mod.ts";
-
+import { oakCors } from 'https://deno.land/x/cors/mod.ts'
 
 import EventHandler from "./eventHandler.js";
 
@@ -23,6 +23,9 @@ router.get("/addApp", (ctx) => handleRequest(ctx, "/addApp"));
 router.get("/listApp", (ctx) => handleRequest(ctx, "/listApp"));
 router.get("/chgApp", (ctx) => handleRequest(ctx, "/chgApp"));
 
+app.use(oakCors({
+    origin: '*',
+}))
 app.use(router.routes());
 app.use(router.allowedMethods());
 app.listen({ port });

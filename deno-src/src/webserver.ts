@@ -146,6 +146,7 @@ async function handleRequest(ctx: any, path: string) {
 
 // ------- default -------
 			default:
+				console.log(`${file}> default`); // Logging
 				response.body = { message: "Invalid endpoint" };
 				response.status = 404;
 				break;

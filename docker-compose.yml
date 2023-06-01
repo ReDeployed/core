@@ -6,22 +6,47 @@ services:
     ports:
       - '80:80' # Astro HTTP Redirect Port
       - '443:443' # Astro HTTPS Port
-      - '8080:8080' # Deno API Port
+      - '8080:8080' # Deno HTTPS Port
     volumes:
       - ./proxy/conf:/etc/nginx/conf.d
       - ./proxy/ssl:/etc/ssl/private
+    hostname: "proxy"
+    networks:
+      backend:
+        ipv4_address: 172.20.0.2
   astro:
+    restart: unless-stopped
     build:
       context: .
       dockerfile: astro-src/Dockerfile
-    hostname: "re-astro"
+    hostname: "astro"
+    #ports:
+    #  - '8085:8085' # Astro HTTP Port
+    networks:
+      backend:
+        ipv4_address: 172.20.0.3
   surreal:
+    restart: unless-stopped
     build:
       context: .
       dockerfile: surreal-src/Dockerfile
-    hostname: "re-surreal"
+    hostname: "surreal"
+    networks:
+      backend:
+        ipv4_address: 172.20.0.4
   deno:
     build:
       context: .
       dockerfile: deno-src/Dockerfile
-    hostname: "re-deno"
+    hostname: "deno"
+    #ports:
+    #  - '8080:8080' # Deno HTTP Port
+    networks:
+      backend:
+        ipv4_address: 172.20.0.5
+
+networks:
+  backend:
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

@@ -7,4 +7,5 @@ export default defineConfig({
   integrations: [svelte()],
   output: "server",
   adapter: deno(),
+  publicDir: './src/public'
 });

@@ -1,6 +1,8 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import API from '../../components/ApiDev.svelte';
 import SvelteSite from '../../components/MainPage.svelte'
+import API from '../../components/ApiDev.svelte'
 
 const { id } = Astro.params;
 ---
@@ -10,5 +12,7 @@ const { id } = Astro.params;
 	</SvelteSite>
     <div style="padding-left: 10rem;">
         <h1>Editing Device with following ID: {id}</h1>
+        <API astroProp={id} client:visible>
+        </API>
     </div>
 </Layout>

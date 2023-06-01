@@ -1,6 +1,3 @@
-const CHKP_USER = "admin";
-const CHKP_PASS = "Chkp!234";
-
 class ChkpHandler{
 
     // get Check Point Session-ID, simplifies future Gaia-API calls

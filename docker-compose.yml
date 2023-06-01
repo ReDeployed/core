@@ -6,7 +6,7 @@ services:
     ports:
       - '80:80' # Astro HTTP Redirect Port
       - '443:443' # Astro HTTPS Port
-      - '8080:8080' # Deno HTTPS Port
+      #- '8080:8080' # Deno HTTPS Port
     volumes:
       - ./proxy/conf:/etc/nginx/conf.d
       - ./proxy/ssl:/etc/ssl/private
@@ -17,6 +17,8 @@ services:
       context: .
       dockerfile: astro-src/Dockerfile
     hostname: "astro"
+    ports:
+      - '8085:8085' # Astro HTTP Port
   surreal:
     restart: unless-stopped
     build:
@@ -28,3 +30,5 @@ services:
       context: .
       dockerfile: deno-src/Dockerfile
     hostname: "deno"
+    ports:
+      - '8080:8080' # Deno HTTP Port

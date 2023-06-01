@@ -8,8 +8,6 @@ import Security from "./encryption.ts";
 
 // Server
 const port = 8080;
-// const certFile = "./ca/ca-certificate.pem";
-// const keyFile = "./ca/key.pem";
 const alpnProtocols = ["h2", "http/1.1"];
 const app = new Application();
 const eventHandler = new EventHandler();

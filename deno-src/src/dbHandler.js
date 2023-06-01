@@ -4,7 +4,7 @@ import Surreal from "https://deno.land/x/surrealdb@v0.7.3/mod.ts";
 import Security from "./encryption.ts"
 
 const sec = new Security();
-const DB_URL = 'http://127.0.0.1:8000/rpc'
+const DB_URL = 'http://surreal:8000/rpc'
 
 // ------------- Database Class ------------- //
 
@@ -116,7 +116,7 @@ class DatabaseHandler{
 		id = ""
 	) {	
 		try{
-			const db = new Surreal("http://0.0.0.0:8000/rpc");
+			const db = new Surreal(DB_URL);
 			let entry;
 			await db.signin({
 				user: "root",
@@ -151,7 +151,7 @@ class DatabaseHandler{
 		value = "",
 	) {
 		try{
-			const db = new Surreal("http://0.0.0.0:8000/rpc");
+			const db = new Surreal(DB_URL);
 			let entry;
 			await db.signin({
 				user: "root",
@@ -277,7 +277,7 @@ async chgApp(
 // ------- set master key ("should" be kept somwhere else) -------
 	async addMK(key) {
 		try{
-			const db = new Surreal("http://0.0.0.0:8000/rpc");
+			const db = new Surreal(DB_URL);
 			let entry;
 			await db.signin({
 				user: "root",
@@ -299,7 +299,7 @@ async chgApp(
 // ------- get master key -------
 	async getMK() {
 		try{
-			const db = new Surreal("http://0.0.0.0:8000/rpc");
+			const db = new Surreal(DB_URL);
 			let entry;
 			await db.signin({
 				user: "root",
@@ -319,7 +319,7 @@ async chgApp(
 // ------- add token -------
 	async addToken(passwd) {
 		try{
-			const db = new Surreal("http://0.0.0.0:8000/rpc");
+			const db = new Surreal(DB_URL);
 			let entry;
 			await db.signin({
 				user: "root",
@@ -345,7 +345,7 @@ async chgApp(
 // ------- get token ------- 
 	async getToken() {
 		try{
-			const db = new Surreal("http://0.0.0.0:8000/rpc");
+			const db = new Surreal(DB_URL);
 			let entry;
 			await db.signin({
 				user: "root",
@@ -370,7 +370,7 @@ async chgApp(
 // ------- add user ------- 
 	async addUser(user, passwd) {
 		try{
-			const db = new Surreal("http://0.0.0.0:8000/rpc");
+			const db = new Surreal(DB_URL);
 			let entry;
 			await db.signin({
 				user: "root",
@@ -395,7 +395,7 @@ async chgApp(
 // ------- delete user -------
 	async delUser(user) {
 		try{
-			const db = new Surreal("http://0.0.0.0:8000/rpc");
+			const db = new Surreal(DB_URL);
 			let entry;
 			await db.signin({
 				user: "root",
@@ -415,7 +415,7 @@ async chgApp(
 // ------- get user -------
 	async getUser(user) {
 		try{
-			const db = new Surreal("http://0.0.0.0:8000/rpc");
+			const db = new Surreal(DB_URL);
 			let entry;
 			await db.signin({
 				user: "root",
@@ -435,7 +435,7 @@ async chgApp(
 	// ------- compare user -------
 	async compUser(user, passwd) {
 		try{
-			const db = new Surreal("http://0.0.0.0:8000/rpc");
+			const db = new Surreal(DB_URL);
 			let entry;
 			await db.signin({
 				user: "root",
@@ -468,7 +468,7 @@ async chgApp(
 	// ------- compare user -------
 	async compToken(token) {
 		try{
-			const db = new Surreal("http://0.0.0.0:8000/rpc");
+			const db = new Surreal(DB_URL);
 			let entry;
 			await db.signin({
 				user: "root",

@@ -4,7 +4,7 @@ import { Application, Router, Response } from "https://deno.land/x/oak@v12.5.0/m
 
 import EventHandler from "./eventHandler.js";
 import DatabaseHandler from "./dbHandler.js";
-import ChkpHandler from "./chkpHandler.js";
+import ChkpHandler from "./ChkpHandler.js";
 import Security from "./encryption.ts";
 
 // Server

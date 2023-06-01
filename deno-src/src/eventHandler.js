@@ -1,11 +1,9 @@
 // Handles events from webserver
 
 import DatabaseHandler from "./dbHandler.js";
-import ChkpHandler from "./chkpHandler.js";
 import SIMAPIHandler from "./chkpSim.js";
 
 const db = new DatabaseHandler();
-const chkp = new ChkpHandler();
 const chkpSim = new SIMAPIHandler();
 
 class EventHandler{

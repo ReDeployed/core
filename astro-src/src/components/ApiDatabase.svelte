@@ -6,7 +6,7 @@
 
   onMount(async () => {
     try {
-      const res = await fetch("https://localhost:8080/listApp", {
+      const res = await fetch("https://10.10.7.121:8080/listApp", {
         mode: "cors",
         method: "GET",
       });
@@ -39,7 +39,7 @@
       {#each data['message'] as item}
         <li
           style="margin-bottom: 1rem; border-bottom: 1px solid black; display: flex;"
-          key={item.id}
+          key={item.hostname}
         >
           <div
             style="display: flex; flex-direction: column; align-items: center; margin-right: 1rem; margin-top: 3rem; width: 220px;"

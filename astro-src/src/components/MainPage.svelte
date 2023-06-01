@@ -164,10 +164,6 @@
     display: none;
   }
 
-  .left-nav li:hover > ul,
-  .left-nav li.visible > ul {
-    display: block;
-  }
 
   .add_optionbackground {
     background-color: #34495e;

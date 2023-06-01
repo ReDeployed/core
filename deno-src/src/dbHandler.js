@@ -4,11 +4,7 @@ import Surreal from "https://deno.land/x/surrealdb@v0.7.3/mod.ts";
 import Security from "./encryption.ts"
 
 const sec = new Security();
-<<<<<<< HEAD
-const DB_URL = 'http://127.0.0.1:8000/rpc'
-=======
 const DB_URL = 'http://surreal:8000/rpc'
->>>>>>> master
 
 // ------------- Database Class ------------- //
 
@@ -360,7 +356,7 @@ class DatabaseHandler{
 		id = ""
 	) {	
 		try{
-			const db = new Surreal(DB_URL);
+			const db = new Surreal("http://0.0.0.0:8000/rpc");
 			let entry;
 			await db.signin({
 				user: "root",
@@ -797,151 +793,6 @@ async delRoute(
 		}
 	}
 
-			// if(!await this.compToken(token)) {
-			// 	db.close();
-			// 	throw "Invalid Token";
-			// }
-
-
-			if(id == "") {
-				entry = await db.delete("appliance");
-			} else {
-				entry = await db.delete(`appliance:${id}`);
-			}
-
-			db.close()
-			return entry
-		} catch(e) {
-			return e
-		}
-	}
-
-// ------- change applications -------
-	async chgApp(
-		//token,
-		id = "",
-		field = "",
-		value = "",
-	) {
-		try{
-			const db = new Surreal(DB_URL);
-			let entry;
-			await db.signin({
-				user: "root",
-				pass: "root",
-			})
-			await db.use("appliance", "appliance");
-
-			if(!await this.compToken(token)) {
-				db.close();
-				throw "Invalid Token";
-			}
-
-
-				switch(field) {
-					case "id":
-						entry = await db.change(`appliance:${id}`, {
-							id: value,
-							updated_at: new Date(),
-						});
-						break;
-
-					case "hostname":
-						entry = await db.change(`appliance:${id}`, {
-							hostname: value,
-							updated_at: new Date(),
-						});
-						break;
-					
-					case "version":
-						entry = await db.change(`appliance:${id}`, {
-							version: value,
-							updated_at: new Date(),
-						});
-						break;
-				}
-
-			db.close()
-			console.log(entry);
-			return entry
-		} catch(e) {
-			return e
-		}
-	}
-
-// ------- delete applications -------
-
-async delApp(
-	id = ""
-) {
-	console.log(`${file}> delApp`); // Logging
-	try{
-		let db = new Surreal(DB_URL);
-		let entry;
-		await db.signin({
-			user: "root",
-			pass: "root",
-		})
-		await db.use("appliance", "appliance");
-
-		if(id == "") {
-			entry = await db.delete("appliance");
-		} else {
-			entry = await db.delete(`appliance:${id}`);
-		}
-
-		db.close()
-		return entry
-	} catch(e) {
-		return e
-	}
-}
-
-// ------- change applications -------
-
-async chgApp(
-	id = "",
-	field = "",
-	value = "",
-) {
-	console.log(`${file}> chgApp`); // Logging
-	try{
-		let db = new Surreal(DB_URL);
-		let entry;
-		await db.signin({
-			user: "root",
-			pass: "root",
-		})
-		await db.use("appliance", "appliance");
-
-			switch(field) {
-				case "id":
-					entry = await db.change(`appliance:${id}`, {
-						id: value,
-						updated_at: new Date(),
-					});
-					break;
-
-				case "hostname":
-					entry = await db.change(`appliance:${id}`, {
-						hostname: value,
-						updated_at: new Date(),
-					});
-					break;
-				
-				case "version":
-					entry = await db.change(`appliance:${id}`, {
-						version: value,
-						updated_at: new Date(),
-					});
-					break;
-			}
-
-		db.close()
-		return entry
-	} catch(e) {
-		return e
-	}
 }
 
 // ------------- Export Database Class ------------- // 

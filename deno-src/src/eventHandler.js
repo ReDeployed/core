@@ -2,10 +2,7 @@
 
 import DatabaseHandler from "./dbHandler.js";
 import ChkpHandler from "./chkpHandler.js";
-<<<<<<< HEAD
 import SIMAPIHandler from "./chkpSim.js";
-=======
->>>>>>> master
 
 const db = new DatabaseHandler();
 const chkp = new ChkpHandler();

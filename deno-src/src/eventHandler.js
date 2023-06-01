@@ -1,95 +1,96 @@
+// Handles events from webserver
 
 import DatabaseHandler from "./dbHandler.js";
-import ChkpHandler from "./ChkpHandler.js";
-
-
-// Filename
-const filePath = import.meta.url;
-const file = filePath.substring(filePath.lastIndexOf("/") + 1);
+import ChkpHandler from "./chkpHandler.js";
 
 const db = new DatabaseHandler();
 const chkp = new ChkpHandler();
 
 class EventHandler{
 
-
 // ------- base (/) -------
-
-	async base() {
-		console.log(`${file}> base`); // Logging
-		return "Chkp geht 👍";
+	base() {
+		return "Firewall manager online 👍";
 	}
 
 // ------- test -------
-	
-	async test() {
-		console.log(`${file}> test`); // Logging
+	test() {
 		return "This is the test endpoint";
 	}
 
-
-
 // ------- ping db -------
-
 	async pingDB() {
-		console.log(`${file}> pingDB`); // Logging
 		return await db.pingDB();
 	}
 
-
-
 // ------- ping chkp -------
-
 	async pingChkp() {
-		console.log(`${file}> pingChkp`); // Logging
-
 		try {
-			const dbReturn = db.ping()
+			return dbReturn = await db.ping()
 		} catch (error) {
 			return error;
 		}
-			
-		return dbReturn;
 	}
 
-
-
 // ------- addApp -------
-   
 	async addApp(
 		id, hostname, version
 	) {
-		console.log(`${file}> addApp`); // Logging
-		return await db.addApp(id, hostname, version)
+		return await db.addApp(id, hostname, version);
 	}
-
-
 
 // ------- listApp -------
-	
-	async listApp() {
-		console.log(`${file}> listApp`); // Logging
-		return await db.listApp();
+	async listApp(id) {
+		return await db.listApp(id);
 	}
-
-
 
 // ------- delApp -------
-	
-	async delApp() {
-		console.log(`${file}> delApp`); // Logging
-		return;
+	async delApp(
+		id,
+	) {
+		return await db.delApp(id);
 	}
-
-
 
 // ------- chgApp -------
-	
 	async chgApp() {
-		console.log(`${file}> chgApp`); // Logging
 		return;
 	}
 
+// ------- add token -------
+	async addToken(key) {
+		return await db.addToken(key);
+	}
+
+// ------- get token -------
+	async getToken() {
+		return await db.getToken();
+	}
+
+// ------- delete token -------
+	async delToken() {
+		return await db.delToken();
+	}
+
+// ------- test token -------
+	async testToken() {
+		return await db.testToken();
+	}
+
+// ------- auth -------
+	async auth(user, passwd) {
+		// Check if user exists
+
+		console.log(user, passwd);
+
+		if(await db.compUser(user, passwd)) {
+			await db.addToken(passwd);
+			const token = await db.getToken();
+			return token["token"];
+		} else {
+			return "Unsuccsessfull login attempt"
+		}
+		
+	}
 
 
 }

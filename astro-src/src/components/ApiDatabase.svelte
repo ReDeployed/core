@@ -39,7 +39,7 @@
       {#each data['message'] as item}
         <li
           style="margin-bottom: 1rem; border-bottom: 1px solid black; display: flex;"
-          key={item.hostname}
+          key={item.id}
         >
           <div
             style="display: flex; flex-direction: column; align-items: center; margin-right: 1rem; margin-top: 3rem; width: 220px;"

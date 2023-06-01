@@ -58,12 +58,6 @@
     justify-content: space-between;
   }
 
-  .token-label {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 0.5rem;
-  }
-
   .token-input {
     width: 98%;
     padding: 0.5rem;

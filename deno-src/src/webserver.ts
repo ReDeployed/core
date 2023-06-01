@@ -1,33 +1,52 @@
 import { Application, Router, Response } from "https://deno.land/x/oak/mod.ts";
+import { oakCors } from 'https://deno.land/x/cors/mod.ts'
 
-
+import EventHandler from "./eventHandler.js";
 import DatabaseHandler from "./dbHandler.js";
+import ChkpHandler from "./chkpHandler.js";
+import Security from "./encryption.ts";
 
-// Filename
-const filePath = import.meta.url;
-const file = filePath.substring(filePath.lastIndexOf('/') + 1);
-
+// Server
 const port = 8080;
-const certFile = "./auth/ca-certificate.pem";
-const keyFile = "./auth/key.pem";
+// const certFile = "./ca/ca-certificate.pem";
+// const keyFile = "./ca/key.pem";
 const alpnProtocols = ["h2", "http/1.1"];
 const app = new Application();
+const eventHandler = new EventHandler();
 const db = new DatabaseHandler();
+const chkp = new ChkpHandler();
+const sec = new Security();
 
 const router = new Router();
 
-// Call API Functions
+// Api Endpoints
 router.get("/", (ctx) => handleRequest(ctx, "/"));
 router.get("/test", (ctx) => handleRequest(ctx, "/test"));
-router.get("/ping", (ctx) => handleRequest(ctx, "/ping"));
+router.get("/pingDB", (ctx) => handleRequest(ctx, "/pingDB"));
+router.get("/pingChkp", (ctx) => handleRequest(ctx, "/pingChkp"));
 router.get("/addApp", (ctx) => handleRequest(ctx, "/addApp"));
 router.get("/listApp", (ctx) => handleRequest(ctx, "/listApp"));
+router.get("/delApp", (ctx) => handleRequest(ctx, "/delApp"));
+router.get("/chgApp", (ctx) => handleRequest(ctx, "/chgApp"));
+router.get("/addToken", (ctx) => handleRequest(ctx, "/addToken"));
+router.get("/getToken", (ctx) => handleRequest(ctx, "/getToken"));
+router.get("/delToken", (ctx) => handleRequest(ctx, "/delToken"));
+router.get("/testToken", (ctx) => handleRequest(ctx, "/testToken"));
+router.get("/auth", (ctx) => handleRequest(ctx, "/auth"));
 
+
+
+app.use(oakCors({
+    origin: '*',
+}))
 app.use(router.routes());
 app.use(router.allowedMethods());
-app.listen({ port, certFile, keyFile, alpnProtocols });
+app.listen({ port, alpnProtocols });
 
-console.log(`${file} Started Webserver`);
+await db.addMK(await sec.generateKey());
+await db.addUser("admin", "admin");
+
+console.log(`Webserver running on Port ${port}`)
 
 async function handleRequest(ctx: any, path: string) {
 	const response = new Response();
@@ -43,46 +62,89 @@ async function handleRequest(ctx: any, path: string) {
 	}
 
 // -------------- Simple API Functions --------------
-
 	switch (path) {
-			// API Test
+
+
+// ------- base (/) -------
 			case "/":
-				response.body = { message: "API geht 👍" };
+				response.body = { message: await eventHandler.base() };
+				break;
+
+// ------- test -------
+			case "/test":
+				response.body = { message: await eventHandler.test() };
+				break;
+
+// ------- ping db -------
+			case "/pingDB":
+				response.body = { message: await eventHandler.pingDB() };
 				break;
 			
-			// Test Endpoint
-			case "/test":
-				response.body = { message: "This is the test endpoint" };
+// ------- ping chkp -------
+			case "/pingChkp":
+				response.body = { message: await eventHandler.pingChkp() };
 				break;
 
-			// Database Ping
-			case "/ping":
-				response.body = { message: await db.ping() };
-				break;
-
-			// Add Application
+// ------- addApp -------
 			case "/addApp": 
-				response.body = { message: await db.addApp(
+				response.body = { message: await eventHandler.addApp(
 					params["id"],
 					params["hostname"],
 					params["version"],
 				) }
 				break;
 
-			// List Application
+// ------- listApp -------
 			case "/listApp":
-				response.body = { message: await db.listApp() };
+				response.body = { message: await eventHandler.listApp(
+					params["id"],
+				) };
 				break;
 
-			// Delete Application
+// ------- delApp -------
 			case "/delApp":
+				response.body = { message: await eventHandler.delApp(
+					params["id"],
+				)};
 				break;
 
-			// Delete All 
-			case "/detAll":
+// ------- chgApp -------
+			case "/chgApp":
+				response.body = { message: await eventHandler.chgApp()};
 				break;
 
-			// Default Response
+// ------- add Token -------
+			case "/addToken":
+				response.body = { message: await eventHandler.addToken(
+					params["key"],
+				)};
+				break;
+
+// ------- get token -------
+			case "/getToken":
+				response.body = { message: await eventHandler.getToken()};
+				break;
+
+// ------- delete token -------
+			case "/delToken":
+				response.body = { message: await eventHandler.delToken()};
+				break;
+	
+// ------- test token -------
+			case "/testToken":
+				response.body = { message: await eventHandler.testToken()};
+				break;
+
+// ------- test token -------
+			case "/auth":
+				response.body = { message: await eventHandler.auth(
+					params["user"],
+					params["passwd"],
+				)};
+				break;
+
+
+// ------- default -------
 			default:
 				response.body = { message: "Invalid endpoint" };
 				response.status = 404;

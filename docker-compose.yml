@@ -6,11 +6,11 @@ services:
     ports:
       - '80:80' # Astro HTTP Redirect Port
       - '443:443' # Astro HTTPS Port
-      - '8080:8080' # Deno
-      #- '8000:8000' # SurrealDB
+      - '8080:8080' # Deno HTTPS Port
     volumes:
       - ./proxy/conf:/etc/nginx/conf.d
       - ./proxy/ssl:/etc/ssl/private
+    hostname: "proxy"
   astro:
     restart: unless-stopped
     build:

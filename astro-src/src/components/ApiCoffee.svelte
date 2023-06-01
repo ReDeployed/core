@@ -6,15 +6,15 @@
 
     onMount(async () => {
         const headers = {
-            'Authorization': 'Test',
-            'Content-Type': 'application/json'
+            'mode': 'no-cors',
+            'origin': 'no-cors',
         };
 
         const options = {
             headers
         };
 
-        const res = await fetch('https://api.sampleapis.com/coffee/hot', options);
+        const res = await fetch('https://127.0.0.1:8080/test', options);
         data = await res.json();
     });
 

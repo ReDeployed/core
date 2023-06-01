@@ -1,10 +1,10 @@
 <script>
+
 import { onMount } from "svelte";
 
 let isLoading = true;
 let data = [];
 export let astroProp;
-let new_data
 
 onMount(async () => {
     try {
@@ -14,30 +14,18 @@ onMount(async () => {
         });
         if (res.status == 200) {
             data = await res.json();
+            data = data["message"];
         } else {
             console.error("Failed to fetch data from the API.");
         }
-        data = data["message"];
     } catch (error) {
         console.error("Error occurred while fetching data:", error);
     }
 
-    isLoading = false; // Set isLoading to false regardless of API call success or failure
+    isLoading = false;
 });
 
-console.log(data)
-
 </script>
-
-{#if isLoading}
-  <div class="loading-circle">
-    <div class="loading-spinner" />
-  </div>
-{:else if data}
-    {data.id}
-{:else}
-  <p>No data available.</p>
-{/if}
 
 <style>
     .loading-circle {
@@ -65,3 +53,17 @@ console.log(data)
       }
     }
 </style>
+
+{#if isLoading}
+  <div class="loading-circle">
+    <div class="loading-spinner" />
+  </div>
+{:else if data}
+    <div style="display: grid; width: 50%;">
+        <label for="host-In">Hostname</label><input id="host-In" value={data.id.split(":")[1]}><br>
+        <label for="ip-In">IPAddress</label><input id="ip-In" value={data.interfaces.objects[0]["ipv4-address"]}><br>
+        <label for="sub-In">SubnetMask</label><input id="sub-In" value={data.interfaces.objects[0]["ipv4-mask-length"]}><br>
+    </div>
+{:else}
+  <p>No data available.</p>
+{/if}

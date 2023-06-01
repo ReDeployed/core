@@ -6,12 +6,12 @@
 
   onMount(async () => {
     try {
-      const res = await fetch("https://10.10.7.121:8080/listApp", {
+      const res = await fetch("https://localhost:8080/listApp", {
         mode: "cors",
         method: "GET",
       });
       if (res.status == 200) {
-        data = await res.json()
+        data = await res.json();
       } else {
         console.error("Failed to fetch data from the API.");
       }
@@ -45,12 +45,12 @@
             style="display: flex; flex-direction: column; align-items: center; margin-right: 1rem; margin-top: 3rem; width: 220px;"
           >
             <button
-              on:click={() => redirectToPage("/edit/" + item.id)}
+              on:click={() => redirectToPage("/edit/" + item.id.split(":")[1])}
               class="buttonfancy"
               style="margin-bottom: 0.5rem;">Edit</button
             >
             <button
-              on:click={() => redirectToPage("/status/" + item.id)}
+              on:click={() => redirectToPage("/status/" + item.id.split(":")[1])}
               class="buttonfancy">Status</button
             >
           </div>

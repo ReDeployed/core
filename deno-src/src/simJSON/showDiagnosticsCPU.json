@@ -2,7 +2,7 @@
     "from": 1,
     "objects": [
         {
-        "idle": 90,
+        "idle": 80,
         "interrupt": 2564,
         "io-wait": 0,
         "system": 5,

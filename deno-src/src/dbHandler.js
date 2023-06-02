@@ -4,7 +4,7 @@ import Surreal from "https://deno.land/x/surrealdb@v0.7.3/mod.ts";
 import Security from "./encryption.ts"
 
 const sec = new Security();
-const DB_URL = 'http://surreal:8000/rpc'
+const DB_URL = "http://127.0.0.1:8000/rpc"
 
 // ------------- Database Class ------------- //
 
@@ -12,6 +12,28 @@ const DB_URL = 'http://surreal:8000/rpc'
 class DatabaseHandler{
 
 // ------------- Database Functions ------------- // 
+
+// ------- ping -------
+async pingDB(/*token*/) {	
+	try{
+		const db = new Surreal(DB_URL);
+		await db.signin({
+			user: "root",
+			pass: "root",
+		})
+
+		// if(!await this.compToken(token)) {
+		// 	db.close();
+		// 	throw "Invalid Token";
+		// }
+
+		await db.use("test", "test");
+		db.close()
+	} catch(e) {
+		return e
+	}
+	return "pong"
+}
 
 // ------- startManage -------
 	async startManage(id, ip) {
@@ -100,31 +122,6 @@ class DatabaseHandler{
 	}
 
 
-
-// ------------- Database Functions ------------- // 
-
-// ------- ping -------
-	async pingDB(/*token*/) {	
-		try{
-			const db = new Surreal(DB_URL);
-			await db.signin({
-				user: "root",
-				pass: "root",
-			})
-
-			// if(!await this.compToken(token)) {
-			// 	db.close();
-			// 	throw "Invalid Token";
-			// }
-
-			await db.use("test", "test");
-			db.close()
-		} catch(e) {
-			return e
-		}
-		return "pong"
-	}
-
 // ------- add Application -------
 	async addApp(
 		//token,
@@ -207,7 +204,7 @@ class DatabaseHandler{
 		id = ""
 	) {	
 		try{
-			const db = new Surreal("http://0.0.0.0:8000/rpc");
+			const db = new Surreal(DB_URL);
 			let entry;
 			await db.signin({
 				user: "root",
@@ -234,330 +231,6 @@ class DatabaseHandler{
 		}
 	}
 
-// ------- add interface -------
-	async addInt(
-		//token,
-		id = Math.random().toString(36).substr(2, 10),
-		app = "No Application", // interface owned by
-		name = "No Interfacename",
-		ip = "No IP",
-		mask = "/24",
-		nextHop = "1.2.3.4",
-	) {
-		try{
-			const db = new Surreal(DB_URL);
-			let entry;
-			await db.signin({
-				user: "root",
-				pass: "root",
-			})
-			await db.use("interface", "interface");
-
-			if(id == "") {
-				id = Math.random().toString(36).substr(2, 10);
-			}
-
-			// if(!await this.compToken(token)) {
-			// 	db.close();
-			// 	throw "Invalid Token";
-			// }
-
-			entry = await db.create(`interface:${id}`, {
-				id: id,
-				app: app,
-				name: name,
-				ip: ip,
-				mask: mask,
-				nextHop: nextHop,
-			})
-
-			db.close()
-			return entry;
-		} catch(e) {
-			return e
-		}
-	}
-
-// ------- list interfaces -------
-	async getInt(
-		id,
-		app,
-	) {
-		try{
-			const db = new Surreal(DB_URL);
-			let entry;
-			await db.signin({
-				user: "root",
-				pass: "root",
-			})
-			await db.use("interface", "interface");
-
-			if(id != undefined) {
-				entry = await db.select(`interface:${id}`);
-			} else if(app != undefined) {
-				console.log("asdf");
-				const result = await db.select("interface");
-				entry = result.filter(entry => entry.app == app);
-				return entry;
-			} else {
-				entry = await db.select("interface");
-			} 
-
-			// if(!await this.compToken(token)) {
-			// 	db.close();
-			// 	throw "Invalid Token";
-			// }
-
-
-
-			// entry = await db.query(`SELECT * FROM type::table($tb) WHERE type::table{app} = ${app};`, {
-			// 	tb: "interface",
-			// 	app: app,
-			// });
-
-			db.close()
-			return entry
-		} catch(e) {
-			return e
-		}
-	}
-
-// ------- delete interface -------
-	async delInt(
-		//token,
-		id = ""
-	) {	
-		try{
-			const db = new Surreal("http://0.0.0.0:8000/rpc");
-			let entry;
-			await db.signin({
-				user: "root",
-				pass: "root",
-			})
-			await db.use("interface", "interface");
-
-			// if(!await this.compToken(token)) {
-			// 	db.close();
-			// 	throw "Invalid Token";
-			// }
-
-			entry = await this.delete(`interface:${id}`);
-
-			db.close()
-			return entry
-		} catch(e) {
-			return e
-		}
-	}
-
-
-
-// ------------- Diagnostics Functions ------------- // 
-
-// ------- setDiagnostics -------
-	async setDiagnostics(
-		id = "",
-		diaCPU,
-		diaMEM,
-	) {	
-		try{
-			const db = new Surreal("http://0.0.0.0:8000/rpc");
-			let entry;
-			await db.signin({
-				user: "root",
-				pass: "root",
-			})
-			await db.use("diagnostics", "diagnostics");
-
-			// if(!await this.compToken(token)) {
-			// 	db.close();
-			// 	throw "Invalid Token";
-			// }
-
-			entry = await db.update(`diagnostics:${id}`, {
-				id: id,
-				diaCPU: diaCPU,
-				diaMEM: diaMEM,
-			})
-
-			console.log(entry);
-
-			db.close()
-			return entry
-		} catch(e) {
-			return e
-		}
-	}
-
-// ------- getDiagnostics -------
-	async getDiagnostics(
-		id,
-		type,
-	) {	
-		try{
-			const db = new Surreal("http://0.0.0.0:8000/rpc");
-			let entry;
-			await db.signin({
-				user: "root",
-				pass: "root",
-			})
-			await db.use("diagnostics", "diagnostics");
-	
-			// if(!await this.compToken(token)) {
-			// 	db.close();
-			// 	throw "Invalid Token";
-			// }
-	
-			const result = await db.select(`diagnostics:${id}`);
-	
-			switch(type) {
-				case "cpu":
-					entry = result["diaCPU"];
-					break;
-
-				case "mem": 
-					entry = result["diaMEM"];
-					break;
-			
-				default:
-					entry = result;
-					break;
-			}
-
-			console.log(entry);
-			
-			db.close()
-			return entry
-		} catch(e) {
-			return e
-		}
-	}
-
-
-
-
-
-// ------- add route -------
-async addRoute(
-	//token,
-	id = Math.random().toString(36).substr(2, 10),
-	app = "No Application", // interface owned by
-	name = "No Interfacename",
-	ip = "No IP",
-	mask = "/24",
-	nextHop = "1.2.3.4",
-) {
-	try{
-		const db = new Surreal(DB_URL);
-		let entry;
-		await db.signin({
-			user: "root",
-			pass: "root",
-		})
-		await db.use("interface", "interface");
-
-		if(id == "") {
-			id = Math.random().toString(36).substr(2, 10);
-		}
-
-		// if(!await this.compToken(token)) {
-		// 	db.close();
-		// 	throw "Invalid Token";
-		// }
-
-		entry = await db.create(`interface:${id}`, {
-			id: id,
-			app: app,
-			name: name,
-			ip: ip,
-			mask: mask,
-			nextHop: nextHop,
-		})
-
-		db.close()
-		return entry;
-	} catch(e) {
-		return e
-	}
-}
-
-// ------- list route -------
-async getRoute(
-	id,
-	app,
-) {
-	try{
-		const db = new Surreal(DB_URL);
-		let entry;
-		await db.signin({
-			user: "root",
-			pass: "root",
-		})
-		await db.use("interface", "interface");
-
-		if(id != undefined) {
-			entry = await db.select(`interface:${id}`);
-		} else if(app != undefined) {
-			console.log("asdf");
-			const result = await db.select("interface");
-			entry = result.filter(entry => entry.app == app);
-			return entry;
-		} else {
-			entry = await db.select("interface");
-		} 
-
-		// if(!await this.compToken(token)) {
-		// 	db.close();
-		// 	throw "Invalid Token";
-		// }
-
-
-
-		// entry = await db.query(`SELECT * FROM type::table($tb) WHERE type::table{app} = ${app};`, {
-		// 	tb: "interface",
-		// 	app: app,
-		// });
-
-		db.close()
-		return entry
-	} catch(e) {
-		return e
-	}
-}
-
-// ------- delete route -------
-async delRoute(
-	//token,
-	id = ""
-) {	
-	try{
-		const db = new Surreal("http://0.0.0.0:8000/rpc");
-		let entry;
-		await db.signin({
-			user: "root",
-			pass: "root",
-		})
-		await db.use("interface", "interface");
-
-		// if(!await this.compToken(token)) {
-		// 	db.close();
-		// 	throw "Invalid Token";
-		// }
-
-		entry = await this.delete(`interface:${id}`);
-
-		db.close()
-		return entry
-	} catch(e) {
-		return e
-	}
-}
-
-// ------- add interface to appliance -------
-
-// ------- remove interface from device -------
-
-
 
 
 // ------------- Security Functions ------------- // 
@@ -565,7 +238,7 @@ async delRoute(
 // ------- set master key ("should" be kept somwhere else) -------
 	async addMK(key) {
 		try{
-			const db = new Surreal("http://0.0.0.0:8000/rpc");
+			const db = new Surreal(DB_URL);
 			let entry;
 			await db.signin({
 				user: "root",
@@ -587,7 +260,7 @@ async delRoute(
 // ------- get master key -------
 	async getMK() {
 		try{
-			const db = new Surreal("http://0.0.0.0:8000/rpc");
+			const db = new Surreal(DB_URL);
 			let entry;
 			await db.signin({
 				user: "root",
@@ -607,7 +280,7 @@ async delRoute(
 // ------- add token -------
 	async addToken(passwd) {
 		try{
-			const db = new Surreal("http://0.0.0.0:8000/rpc");
+			const db = new Surreal(DB_URL);
 			let entry;
 			await db.signin({
 				user: "root",
@@ -633,7 +306,7 @@ async delRoute(
 // ------- get token ------- 
 	async getToken() {
 		try{
-			const db = new Surreal("http://0.0.0.0:8000/rpc");
+			const db = new Surreal(DB_URL);
 			let entry;
 			await db.signin({
 				user: "root",
@@ -658,7 +331,7 @@ async delRoute(
 // ------- add user ------- 
 	async addUser(user, passwd) {
 		try{
-			const db = new Surreal("http://0.0.0.0:8000/rpc");
+			const db = new Surreal(DB_URL);
 			let entry;
 			await db.signin({
 				user: "root",
@@ -683,7 +356,7 @@ async delRoute(
 // ------- delete user -------
 	async delUser(user) {
 		try{
-			const db = new Surreal("http://0.0.0.0:8000/rpc");
+			const db = new Surreal(DB_URL);
 			let entry;
 			await db.signin({
 				user: "root",
@@ -703,7 +376,7 @@ async delRoute(
 // ------- get user -------
 	async getUser(user) {
 		try{
-			const db = new Surreal("http://0.0.0.0:8000/rpc");
+			const db = new Surreal(DB_URL);
 			let entry;
 			await db.signin({
 				user: "root",
@@ -723,7 +396,7 @@ async delRoute(
 	// ------- compare user -------
 	async compUser(user, passwd) {
 		try{
-			const db = new Surreal("http://0.0.0.0:8000/rpc");
+			const db = new Surreal(DB_URL);
 			let entry;
 			await db.signin({
 				user: "root",
@@ -756,7 +429,7 @@ async delRoute(
 	// ------- compare user -------
 	async compToken(token) {
 		try{
-			const db = new Surreal("http://0.0.0.0:8000/rpc");
+			const db = new Surreal(DB_URL);
 			let entry;
 			await db.signin({
 				user: "root",

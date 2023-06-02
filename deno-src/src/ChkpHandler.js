@@ -1,4 +1,4 @@
-class ChkpHandler{
+class ChkpHandler {
 
     // get Check Point Session-ID, simplifies future Gaia-API calls
 
@@ -31,7 +31,7 @@ class ChkpHandler{
 
     // get version of appliance
 
-    async getVer(
+    async getVersion(
         sid, ip
     ) {       
         try {
@@ -279,33 +279,6 @@ class ChkpHandler{
         }        
     }
 
-    // get version of appliance
-    async getVer(
-        sid, ip
-    ) {       
-        try {
-            const RESPONSE = await fetch(`https://${ip}:443/gaia_api/v1.7/show-version`, {
-            method: 'POST',
-            headers: {
-                'X-chkp-sid': sid,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({})
-            });
-
-            if (!RESPONSE.ok) {
-            throw new Error('Request failed with status: ' + RESPONSE.status);
-            }
-
-            const VERSION = await RESPONSE.json();
-
-            return VERSION;
-
-        } catch (error) {
-            console.log(error);
-            return null;
-        }
-    }
     // add a static route
 
     /*
@@ -352,32 +325,6 @@ class ChkpHandler{
         }        
     }
 
-    // get hostname of appliance
-    async getHostname(
-        sid, ip
-    ) {
-        try {
-            const RESPONSE = await fetch(`https://${ip}:443/gaia_api/v1.7/show-hostname`, {
-            method: 'POST',
-            headers: {
-                'X-chkp-sid': sid,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({})
-            });
-
-            if (!RESPONSE.ok) {
-            throw new Error('Request failed with status: ' + RESPONSE.status);
-            }
-
-            const HOSTNAME = await RESPONSE.json();
-
-            return HOSTNAME;
-        } catch (error) {
-            console.log('Error:', error);
-            return null;
-        }
-    }
     // delete a static route
     // net and subnet parameter same as addStaticRoute()
 

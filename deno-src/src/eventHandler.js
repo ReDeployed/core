@@ -32,9 +32,6 @@ class EventHandler{
 		}
 	}
 
-
-
-
 // ------- start manage -------
 	async startManage(id, ip) {
 
@@ -57,7 +54,6 @@ class EventHandler{
 
 	}
 
-
 // ------- stop manage -------
 	async stopManage(id) {
 		await db.stopManage(id);
@@ -69,34 +65,10 @@ class EventHandler{
 		return await db.getManaged(getIdList);
 	}
 
-
-
-// ------- update -------
-async update() {
-
-	const appList = await db.getManaged();
-
-	for(const entry of appList) {
-		
-		const id = entry.id.split(":")[1];
-		const ip = entry.ip;
-
-		// Update
-		return await db.addApp(
-			id, 
-			ip,
-			await chkpSim.showDiagnosticsCPU(),
-			await chkpSim.showDiagnosticsMEM(),
-			await chkpSim.showInterfaces(),
-			await chkpSim.showVersion(),
-			);	}
-
-
-}
-
-
-
-
+// ------- listApp -------
+	async listApp(id) {
+		return await db.listApp(id);
+	}
 
 // ------- addApp -------
 	async addApp(
@@ -114,41 +86,27 @@ async update() {
 		
 	}
 
-// ------- listApp -------
-	async listApp(id) {
-		return await db.listApp(id);
-	}
+// ------- update -------
+	async update() {
 
-// ------- delApp -------
-	async delApp(
-		id,
-	) {
-		return await db.delApp(id);
-	}
+		const appList = await db.getManaged();
 
-// ------- chgApp -------
-	async chgApp() {
-		return;
-	}
+		for(const entry of appList) {
+			
+			const id = entry.id.split(":")[1];
+			const ip = entry.ip;
 
-// ------- add token -------
-	async addToken(key) {
-		return await db.addToken(key);
-	}
+			// Update
+			return await db.addApp(
+				id, 
+				ip,
+				await chkpSim.showDiagnosticsCPU(),
+				await chkpSim.showDiagnosticsMEM(),
+				await chkpSim.showInterfaces(),
+				await chkpSim.showVersion(),
+				);	}
 
-// ------- get token -------
-	async getToken() {
-		return await db.getToken();
-	}
 
-// ------- delete token -------
-	async delToken() {
-		return await db.delToken();
-	}
-
-// ------- test token -------
-	async testToken() {
-		return await db.testToken();
 	}
 
 // ------- auth -------
@@ -166,60 +124,6 @@ async update() {
 		}
 		
 	}
-
-
-
-
-
-
-// ------- diaCPU -------
-	async diaCPU(id) {
-		return await db.getDiagnostics(id, "cpu");
-	}
-
-// ------- diaMEM -------
-	async diaMEM(id) {
-		return await db.getDiagnostics(id, "mem");
-	}
-
-
-
-// ------- add token -------
-	async addToken(key) {
-		return await db.addToken(key);
-	}
-
-// ------- get token -------
-	async getToken() {
-		return await db.getToken();
-	}
-
-// ------- delete token -------
-	async delToken() {
-		return await db.delToken();
-	}
-
-// ------- test token -------
-	async testToken() {
-		return await db.testToken();
-	}
-
-// ------- auth -------
-	async auth(user, passwd) {
-		// Check if user exists
-
-		console.log(user, passwd);
-
-		if(await db.compUser(user, passwd)) {
-			await db.addToken(passwd);
-			const token = await db.getToken();
-			return token["token"];
-		} else {
-			return "Unsuccsessfull login attempt"
-		}
-		
-	}
-
 
 }
 

@@ -22,41 +22,12 @@ router.get("/", (ctx) => handleRequest(ctx, "/"));
 router.get("/test", (ctx) => handleRequest(ctx, "/test"));
 router.get("/pingDB", (ctx) => handleRequest(ctx, "/pingDB"));
 router.get("/pingChkp", (ctx) => handleRequest(ctx, "/pingChkp"));
-
-// Manage list
 router.get("/startManage", (ctx) => handleRequest(ctx, "/startManage"));
-router.get("/getManaged", (ctx) => handleRequest(ctx, "/getManaged"));
 router.get("/stopManage", (ctx) => handleRequest(ctx, "/stopManage"));
-
-// Appliances
-router.get("/addApp", (ctx) => handleRequest(ctx, "/addApp"));
 router.get("/listApp", (ctx) => handleRequest(ctx, "/listApp"));
-router.get("/delApp", (ctx) => handleRequest(ctx, "/delApp"));
-router.get("/chgApp", (ctx) => handleRequest(ctx, "/chgApp"));
-router.get("/addToken", (ctx) => handleRequest(ctx, "/addToken"));
-router.get("/getToken", (ctx) => handleRequest(ctx, "/getToken"));
-router.get("/delToken", (ctx) => handleRequest(ctx, "/delToken"));
-router.get("/testToken", (ctx) => handleRequest(ctx, "/testToken"));
-router.get("/auth", (ctx) => handleRequest(ctx, "/auth"));
-
-// Update
 router.get("/update", (ctx) => handleRequest(ctx, "/update"));
-
-// Interfaces
-router.get("/addInt", (ctx) => handleRequest(ctx, "/addInt"));
-router.get("/getInt", (ctx) => handleRequest(ctx, "/getInt"));
-router.get("/delInt", (ctx) => handleRequest(ctx, "/delInt"));
-
-// Diagnostics
-router.get("/diaCPU", (ctx) => handleRequest(ctx, "/diaCPU"));
-router.get("/diaMEM", (ctx) => handleRequest(ctx, "/diaMEM"));
-
-// Security 
-router.get("/addToken", (ctx) => handleRequest(ctx, "/addToken"));
-router.get("/getToken", (ctx) => handleRequest(ctx, "/getToken"));
-router.get("/delToken", (ctx) => handleRequest(ctx, "/delToken"));
-router.get("/testToken", (ctx) => handleRequest(ctx, "/testToken"));
 router.get("/auth", (ctx) => handleRequest(ctx, "/auth"));
+
 
 app.use(router.routes());
 app.use(router.allowedMethods());
@@ -103,10 +74,6 @@ async function handleRequest(ctx: any, path: string) {
 				response.body = { message: await eventHandler.pingChkp() };
 				break;
 
-
-
-// -------------- Appliance API Functions --------------
-
 // ------- start manage -------
 			case "/startManage":
 				response.body = { message: await eventHandler.startManage(
@@ -141,31 +108,6 @@ async function handleRequest(ctx: any, path: string) {
 	response.body = { message: await eventHandler.update() };
 	break;
 
-
-// -------------- Security API Functions --------------
-
-// ------- add Token -------
-			case "/addToken":
-				response.body = { message: await eventHandler.addToken(
-					params["key"],
-				)};
-				break;
-
-// ------- get token -------
-			case "/getToken":
-				response.body = { message: await eventHandler.getToken()};
-				break;
-
-// ------- delete token -------
-			case "/delToken":
-				response.body = { message: await eventHandler.delToken()};
-				break;
-	
-// ------- test token -------
-			case "/testToken":
-				response.body = { message: await eventHandler.testToken()};
-				break;
-
 // ------- test token -------
 			case "/auth":
 				response.body = { message: await eventHandler.auth(
@@ -173,7 +115,6 @@ async function handleRequest(ctx: any, path: string) {
 					params["passwd"],
 				)};
 				break;
-
 
 // ------- default -------
 			default:

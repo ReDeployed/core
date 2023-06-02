@@ -6,7 +6,7 @@
 
   onMount(async () => {
     try {
-      const res = await fetch("https://10.10.7.121:8080/listApp", {
+      const res = await fetch("https://localhost:8080/listApp", {
         mode: "cors",
         method: "GET",
       });

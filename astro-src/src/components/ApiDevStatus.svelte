@@ -8,7 +8,7 @@ export let astroProp;
 
 onMount(async () => {
     try {
-        const res = await fetch("https://10.10.7.121:8080/listApp?id=" + astroProp, {
+        const res = await fetch("https://localhost:8080/listApp?id=" + astroProp, {
             mode: "cors",
             method: "GET",
         });
@@ -127,7 +127,7 @@ onMount(async () => {
       <label for="sub-In">SubnetMask</label><input id="sub-In" value={data.interfaces.objects[0]["ipv4-mask-length"]} class="input-field"  readonly><br>
 
       <div class="button-container">
-        <button class="buttonfancy" onclick="window.location.href = 'https://10.10.7.121/listing';">Return</button>
+        <button class="buttonfancy" onclick="window.location.href = '/listing';">Return</button>
       </div>
     {:else}
       <p>No data available.</p>

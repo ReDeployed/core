@@ -8,7 +8,7 @@ export let astroProp;
 
 onMount(async () => {
     try {
-        const res = await fetch("https://10.10.7.121:8080/listApp?id=" + astroProp, {
+        const res = await fetch("https://localhost:8080/listApp?id=" + astroProp, {
             mode: "cors",
             method: "GET",
         });
@@ -129,7 +129,7 @@ onMount(async () => {
       <div class="button-container">
         <button class="buttonfancy">Update</button>
     
-        <button class="buttonfancy" onclick="window.location.href = 'https://10.10.7.121/listing';">Cancel</button>
+        <button class="buttonfancy" onclick="window.location.href = '/listing';">Cancel</button>
         
       </div>
     {:else}

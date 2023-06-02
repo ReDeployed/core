@@ -38,22 +38,18 @@ class EventHandler{
 
 
 // ------- start manage -------
-	async startManage(id, ip) {
-        const SID = await chkHandler.getSID("10.1.1.101", "admin", "p@ssw0rd");
-
-        if(id == "" || id == undefined) {
-			const hostname = await chkHandler.getHostname(SID, "10.1.1.101");
-			id = hostname.name
-		}
-
-        await db.startManage(id, "10.1.1.101");
+	async startManage(ip) {
+        const SID = await chkHandler.getSID(ip, "admin", "p@ssw0rd");
+        const hostname = await chkHandler.getHostname(SID, ip);
+        let id = hostname.name
+        await db.startManage(id, ip);
 		return await db.addApp(
 			id, 
 			ip,
-			await chkHandler.getDiagnostics(SID, "10.1.1.101", "cpu"),
-			await chkHandler.getDiagnostics(SID, "10.1.1.101", "mem"),
-			await chkHandler.getAllInterfaces(SID, "10.1.1.101"),
-			await chkHandler.getVersion(SID, "10.1.1.101"),
+			await chkHandler.getDiagnostics(SID, ip, "cpu"),
+			await chkHandler.getDiagnostics(SID, ip, "memory"),
+			await chkHandler.getAllInterfaces(SID, ip),
+			await chkHandler.getVersion(SID, ip),
 		);
 	}
 

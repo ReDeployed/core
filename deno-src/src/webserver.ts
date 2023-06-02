@@ -110,7 +110,6 @@ async function handleRequest(ctx: any, path: string) {
 // ------- start manage -------
 			case "/startManage":
 				response.body = { message: await eventHandler.startManage(
-					params["id"],
 					params["ip"],
 				) };
 				break;

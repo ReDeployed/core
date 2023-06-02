@@ -10,7 +10,6 @@ const { id } = Astro.params;
     <SvelteSite>
 	</SvelteSite>
     <div style="padding-left: 10rem;">
-        <h1>Status: {id}</h1>
         <API astroProp={id} client:visible/>
     </div>
 </Layout>

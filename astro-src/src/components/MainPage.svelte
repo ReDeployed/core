@@ -39,7 +39,7 @@
                     on:mouseenter={toggleAddHover}
                     on:mouseleave={toggleAddHover}>
                     <li>
-                        <a href="#"><i class="fas fa-plus"/></a>
+                        <a href="/listing"><i class="fas fa-plus"/></a>
                     </li>
                 </ul>
             </li>

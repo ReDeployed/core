@@ -1,4 +1,5 @@
 <script>
+
 import { onMount } from "svelte";
 
 let isLoading = true;
@@ -122,8 +123,21 @@ onMount(async () => {
     {:else if data}
       <h1>Status of: {data.id.split(":")[1]}</h1>
       <label for="host-In">Hostname</label><input id="host-In" value={data.id.split(":")[1]} class="input-field" readonly><br>
-      <label for="ip-In">IPAddress</label><input id="ip-In" value={data.interfaces.objects[0]["ipv4-address"]} class="input-field"  readonly><br>
-      <label for="sub-In">SubnetMask</label><input id="sub-In" value={data.interfaces.objects[0]["ipv4-mask-length"]} class="input-field"  readonly><br>
+      <label style="padding-top: 10px;" for="memfr-In">Memory Load</label><input id="memfr-In" value={data.diaMEM.objects[0]["free"]} class="input-field"  readonly><br>
+      <label style="padding-top: 10px;" for="memus-In">Memory Used</label><input id="memus-In" value={data.diaMEM.objects[0]["used"]} class="input-field"  readonly><br>
+      <label style="padding-top: 10px;" for="memtot-In">Memory Total</label><input id="memtot-In" value={data.diaMEM.objects[0]["total"]} class="input-field"  readonly><br>
+
+      <h1>Interfaces:</h1>
+      {#each data.interfaces.objects as inter}
+      <div class="container" style="width: 80%;">
+        <div class="centered-div" style="border: solid 2px white; margin: 0 auto;">
+            <label for="name-In">Name</label><input id="name-In" value={inter["name"]} class="input-field"  readonly><br>
+            <label style="padding-top: 10px;" for="type-In">Type</label><input id="type-In" value={inter["type"]} class="input-field"  readonly><br>
+            <label style="padding-top: 10px;" for="ip-In">IP Address</label><input id="ip-In" value={inter["ipv4-address"]} class="input-field"  readonly><br>
+            <label style="padding-top: 10px;" for="sub-In">Subnet Mask</label><input id="sub-In" value={inter["ipv4-mask-length"]} class="input-field"  readonly><br>
+        </div>
+      </div>
+      {/each}
 
       <div class="button-container">
         <button class="buttonfancy" onclick="window.location.href = '/listing';">Return</button>

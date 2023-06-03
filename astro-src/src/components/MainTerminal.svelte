@@ -120,23 +120,21 @@ main {
             </div>
             <div class="terminal-body">
             <div class="terminal-line">ls -la</div>
-            <p class="text-terminal-line" data-terminal-line=" ">-> Introductiosn.txt  /  Exploit.txt  /  .credentials.bin</p>
+            <p class="text-terminal-line" data-terminal-line=" ">-&gt; Introductiosn.txt  /  Exploit.txt  /  .credentials.bin</p>
             <br>
             <div class="terminal-line">cat Introductions.txt</div>
             <p class="text-terminal-line" data-terminal-line="01">What is the Re:Deploy FireWall Manager?</p>
             <p class="text-terminal-line" data-terminal-line="02"></p>
-            <p class="text-terminal-line" data-terminal-line="03"> - Re:Deploy is a Firewall Manager that primarily targets CheckPoint Appliances. </p>
+            <p class="text-terminal-line" data-terminal-line="03"> - ReDeploy is a Firewall Manager that primarily targets CheckPoint Appliances. </p>
             <p class="text-terminal-line" data-terminal-line="04"> - We strive to build it using modern tools and frameworks like:</p>
             <p class="text-terminal-line" data-terminal-line="05">&nbsp;&nbsp; - Astro</p>
             <p class="text-terminal-line" data-terminal-line="06">&nbsp;&nbsp; - Svelte</p>
             <p class="text-terminal-line" data-terminal-line="07">&nbsp;&nbsp; - SurrealDB.</p>
             <p class="text-terminal-line" data-terminal-line="08"></p>
-            <p class="text-terminal-line" data-terminal-line="09"> - Most of the configuration will be handled by Ansible or Python scripts.</p>
-            <p class="text-terminal-line" data-terminal-line="10"> - Whilste doind that we try to keep the network traffic and API calls at a minimal level</p> 
-            <p class="text-terminal-line" data-terminal-line="11"> - Features include:</p>
-            <p class="text-terminal-line" data-terminal-line="12">&nbsp;&nbsp - Bulk Config</p>
-            <p class="text-terminal-line" data-terminal-line="13">&nbsp;&nbsp - Deployment and Monitoring</p>
-            <p class="text-terminal-line" data-terminal-line="14">&nbsp;&nbsp - Optional Wazuh Integration for basic SIEM features.</p>
+            <p class="text-terminal-line" data-terminal-line="09"> - Whilste doing that we try to keep the network traffic and API calls minimal</p> 
+            <p class="text-terminal-line" data-terminal-line="10"> - Features include:</p>
+            <p class="text-terminal-line" data-terminal-line="11">&nbsp;&nbsp - Bulk Config</p>
+            <p class="text-terminal-line" data-terminal-line="12">&nbsp;&nbsp - Deployment and Monitoring</p>
             <br>
             <div class="terminal-line">reboot</div>
             <p class="terminal-line loading-text">. . .</p>

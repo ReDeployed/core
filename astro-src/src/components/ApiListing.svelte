@@ -5,6 +5,14 @@
   let data = [];
 
   onMount(async () => {
+    // update first
+    try {
+      const res = await fetch("https://localhost:8080/update");
+    } catch (error) {
+      console.error("Error occurred while fetching data:", error);
+    }
+
+    // then fetch
     try {
       const res = await fetch("https://localhost:8080/listApp", {
         mode: "cors",

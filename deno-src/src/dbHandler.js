@@ -13,8 +13,98 @@ class DatabaseHandler{
 
 // ------------- Database Functions ------------- // 
 
+// ------- startManage -------
+	async startManage(id, ip) {
+		try{
+			const db = new Surreal(DB_URL);
+			let entry;
+			await db.signin({
+				user: "root",
+				pass: "root",
+			})
+			await db.use("manage", "manage");
+
+
+			// if(!await this.compToken(token)) {
+			// 	db.close();
+			// 	throw "Invalid Token";
+			// }
+
+			entry = await db.update(`manage:${id}`, {
+				id: id,
+				ip: ip,
+				updated_at: new Date(),
+			})
+			db.close()
+			return entry;
+		} catch(e) {
+			return e
+		}
+	}
+
+	// ------- getManaged -------
+	async getManaged(getIdList = false) {
+		try{
+			const db = new Surreal(DB_URL);
+			let entry;
+			await db.signin({
+				user: "root",
+				pass: "root",
+			})
+			await db.use("manage", "manage");
+			// if(!await this.compToken(token)) {
+			// 	db.close();
+			// 	throw "Invalid Token";
+			// }
+
+			entry = await db.select("manage");
+
+			if(getIdList) {
+				const ids = entry.map(item => item.id);
+				entry = ids;
+			}
+
+			db.close()
+			return entry;
+		} catch(e) {
+			return e
+		}
+	}
+
+// ------- stopManage -------
+	async stopManage(id) {
+		try{
+			const db = new Surreal(DB_URL);
+			let entry;
+			await db.signin({
+				user: "root",
+				pass: "root",
+			})
+			await db.use("manage", "manage");
+
+			if(id == "") {
+				id = Math.random().toString(36).substr(2, 10);
+			}
+
+			// if(!await this.compToken(token)) {
+			// 	db.close();
+			// 	throw "Invalid Token";
+			// }
+
+			entry = await db.delete(`manage:${id}`)
+			db.close()
+			return entry;
+		} catch(e) {
+			return e
+		}s
+	}
+
+
+
+// ------------- Database Functions ------------- // 
+
 // ------- ping -------
-	async pingDB(token) {	
+	async pingDB(/*token*/) {	
 		try{
 			const db = new Surreal(DB_URL);
 			await db.signin({
@@ -22,12 +112,10 @@ class DatabaseHandler{
 				pass: "root",
 			})
 
-			if(!await this.compToken(token)) {
-				db.close();
-				throw "Invalid Token";
-			}
-
-
+			// if(!await this.compToken(token)) {
+			// 	db.close();
+			// 	throw "Invalid Token";
+			// }
 
 			await db.use("test", "test");
 			db.close()
@@ -40,9 +128,12 @@ class DatabaseHandler{
 // ------- add Application -------
 	async addApp(
 		//token,
-		id = Math.random().toString(36).substr(2, 10),
-		hostname = "No Hostname",
-		version = "No Version"
+		id,
+		ip,
+		diaCPU,
+		diaMEM,
+		interfaces,
+		version,
 	) {
 		try{
 			const db = new Surreal(DB_URL);
@@ -53,21 +144,23 @@ class DatabaseHandler{
 			})
 			await db.use("appliance", "appliance");
 
-			if(id == "") {
-				id = Math.random().toString(36).substr(2, 10);
-			}
-
 			// if(!await this.compToken(token)) {
 			// 	db.close();
 			// 	throw "Invalid Token";
 			// }
 
-			entry = await db.create(`appliance:${id}`, {
+			entry = await db.update(`appliance:${id}`, {
 				id: id,
+				ip: ip,
 				updated_at: new Date(),
-				hostname: hostname,
+				diaCPU: diaCPU,
+				diaMEM: diaMEM,
+				interfaces: interfaces,
 				version: version,
 			})
+
+			console.log(entry)
+
 			db.close()
 			return entry;
 		} catch(e) {
@@ -94,8 +187,6 @@ class DatabaseHandler{
 			// 	throw "Invalid Token";
 			// }
 
-			console.log(id);
-
 			if(id == "") {
 				entry = await db.select("appliance");
 			} else {
@@ -116,7 +207,7 @@ class DatabaseHandler{
 		id = ""
 	) {	
 		try{
-			const db = new Surreal(DB_URL);
+			const db = new Surreal("http://0.0.0.0:8000/rpc");
 			let entry;
 			await db.signin({
 				user: "root",
@@ -143,12 +234,15 @@ class DatabaseHandler{
 		}
 	}
 
-// ------- change applications -------
-	async chgApp(
+// ------- add interface -------
+	async addInt(
 		//token,
-		id = "",
-		field = "",
-		value = "",
+		id = Math.random().toString(36).substr(2, 10),
+		app = "No Application", // interface owned by
+		name = "No Interfacename",
+		ip = "No IP",
+		mask = "/24",
+		nextHop = "1.2.3.4",
 	) {
 		try{
 			const db = new Surreal(DB_URL);
@@ -157,119 +251,313 @@ class DatabaseHandler{
 				user: "root",
 				pass: "root",
 			})
-			await db.use("appliance", "appliance");
+			await db.use("interface", "interface");
 
-			if(!await this.compToken(token)) {
-				db.close();
-				throw "Invalid Token";
+			if(id == "") {
+				id = Math.random().toString(36).substr(2, 10);
 			}
 
+			// if(!await this.compToken(token)) {
+			// 	db.close();
+			// 	throw "Invalid Token";
+			// }
 
-				switch(field) {
-					case "id":
-						entry = await db.change(`appliance:${id}`, {
-							id: value,
-							updated_at: new Date(),
-						});
-						break;
-
-					case "hostname":
-						entry = await db.change(`appliance:${id}`, {
-							hostname: value,
-							updated_at: new Date(),
-						});
-						break;
-					
-					case "version":
-						entry = await db.change(`appliance:${id}`, {
-							version: value,
-							updated_at: new Date(),
-						});
-						break;
-				}
+			entry = await db.create(`interface:${id}`, {
+				id: id,
+				app: app,
+				name: name,
+				ip: ip,
+				mask: mask,
+				nextHop: nextHop,
+			})
 
 			db.close()
-			console.log(entry);
+			return entry;
+		} catch(e) {
+			return e
+		}
+	}
+
+// ------- list interfaces -------
+	async getInt(
+		id,
+		app,
+	) {
+		try{
+			const db = new Surreal(DB_URL);
+			let entry;
+			await db.signin({
+				user: "root",
+				pass: "root",
+			})
+			await db.use("interface", "interface");
+
+			if(id != undefined) {
+				entry = await db.select(`interface:${id}`);
+			} else if(app != undefined) {
+				console.log("asdf");
+				const result = await db.select("interface");
+				entry = result.filter(entry => entry.app == app);
+				return entry;
+			} else {
+				entry = await db.select("interface");
+			} 
+
+			// if(!await this.compToken(token)) {
+			// 	db.close();
+			// 	throw "Invalid Token";
+			// }
+
+
+
+			// entry = await db.query(`SELECT * FROM type::table($tb) WHERE type::table{app} = ${app};`, {
+			// 	tb: "interface",
+			// 	app: app,
+			// });
+
+			db.close()
 			return entry
 		} catch(e) {
 			return e
 		}
 	}
 
-// ------- delete applications -------
+// ------- delete interface -------
+	async delInt(
+		//token,
+		id = ""
+	) {	
+		try{
+			const db = new Surreal("http://0.0.0.0:8000/rpc");
+			let entry;
+			await db.signin({
+				user: "root",
+				pass: "root",
+			})
+			await db.use("interface", "interface");
 
-async delApp(
-	id = ""
-) {
-	console.log(`${file}> delApp`); // Logging
-	try{
-		let db = new Surreal(DB_URL);
-		let entry;
-		await db.signin({
-			user: "root",
-			pass: "root",
-		})
-		await db.use("appliance", "appliance");
+			// if(!await this.compToken(token)) {
+			// 	db.close();
+			// 	throw "Invalid Token";
+			// }
 
-		if(id == "") {
-			entry = await db.delete("appliance");
-		} else {
-			entry = await db.delete(`appliance:${id}`);
+			entry = await this.delete(`interface:${id}`);
+
+			db.close()
+			return entry
+		} catch(e) {
+			return e
 		}
-
-		db.close()
-		return entry
-	} catch(e) {
-		return e
 	}
-}
 
-// ------- change applications -------
 
-async chgApp(
-	id = "",
-	field = "",
-	value = "",
-) {
-	console.log(`${file}> chgApp`); // Logging
-	try{
-		let db = new Surreal(DB_URL);
-		let entry;
-		await db.signin({
-			user: "root",
-			pass: "root",
-		})
-		await db.use("appliance", "appliance");
 
-			switch(field) {
-				case "id":
-					entry = await db.change(`appliance:${id}`, {
-						id: value,
-						updated_at: new Date(),
-					});
+// ------------- Diagnostics Functions ------------- // 
+
+// ------- setDiagnostics -------
+	async setDiagnostics(
+		id = "",
+		diaCPU,
+		diaMEM,
+	) {	
+		try{
+			const db = new Surreal("http://0.0.0.0:8000/rpc");
+			let entry;
+			await db.signin({
+				user: "root",
+				pass: "root",
+			})
+			await db.use("diagnostics", "diagnostics");
+
+			// if(!await this.compToken(token)) {
+			// 	db.close();
+			// 	throw "Invalid Token";
+			// }
+
+			entry = await db.update(`diagnostics:${id}`, {
+				id: id,
+				diaCPU: diaCPU,
+				diaMEM: diaMEM,
+			})
+
+			console.log(entry);
+
+			db.close()
+			return entry
+		} catch(e) {
+			return e
+		}
+	}
+
+// ------- getDiagnostics -------
+	async getDiagnostics(
+		id,
+		type,
+	) {	
+		try{
+			const db = new Surreal("http://0.0.0.0:8000/rpc");
+			let entry;
+			await db.signin({
+				user: "root",
+				pass: "root",
+			})
+			await db.use("diagnostics", "diagnostics");
+	
+			// if(!await this.compToken(token)) {
+			// 	db.close();
+			// 	throw "Invalid Token";
+			// }
+	
+			const result = await db.select(`diagnostics:${id}`);
+	
+			switch(type) {
+				case "cpu":
+					entry = result["diaCPU"];
 					break;
 
-				case "hostname":
-					entry = await db.change(`appliance:${id}`, {
-						hostname: value,
-						updated_at: new Date(),
-					});
+				case "mem": 
+					entry = result["diaMEM"];
 					break;
-				
-				case "version":
-					entry = await db.change(`appliance:${id}`, {
-						version: value,
-						updated_at: new Date(),
-					});
+			
+				default:
+					entry = result;
 					break;
 			}
 
+			console.log(entry);
+			
+			db.close()
+			return entry
+		} catch(e) {
+			return e
+		}
+	}
+
+
+
+
+
+// ------- add route -------
+async addRoute(
+	//token,
+	id = Math.random().toString(36).substr(2, 10),
+	app = "No Application", // interface owned by
+	name = "No Interfacename",
+	ip = "No IP",
+	mask = "/24",
+	nextHop = "1.2.3.4",
+) {
+	try{
+		const db = new Surreal(DB_URL);
+		let entry;
+		await db.signin({
+			user: "root",
+			pass: "root",
+		})
+		await db.use("interface", "interface");
+
+		if(id == "") {
+			id = Math.random().toString(36).substr(2, 10);
+		}
+
+		// if(!await this.compToken(token)) {
+		// 	db.close();
+		// 	throw "Invalid Token";
+		// }
+
+		entry = await db.create(`interface:${id}`, {
+			id: id,
+			app: app,
+			name: name,
+			ip: ip,
+			mask: mask,
+			nextHop: nextHop,
+		})
+
+		db.close()
+		return entry;
+	} catch(e) {
+		return e
+	}
+}
+
+// ------- list route -------
+async getRoute(
+	id,
+	app,
+) {
+	try{
+		const db = new Surreal(DB_URL);
+		let entry;
+		await db.signin({
+			user: "root",
+			pass: "root",
+		})
+		await db.use("interface", "interface");
+
+		if(id != undefined) {
+			entry = await db.select(`interface:${id}`);
+		} else if(app != undefined) {
+			console.log("asdf");
+			const result = await db.select("interface");
+			entry = result.filter(entry => entry.app == app);
+			return entry;
+		} else {
+			entry = await db.select("interface");
+		} 
+
+		// if(!await this.compToken(token)) {
+		// 	db.close();
+		// 	throw "Invalid Token";
+		// }
+
+
+
+		// entry = await db.query(`SELECT * FROM type::table($tb) WHERE type::table{app} = ${app};`, {
+		// 	tb: "interface",
+		// 	app: app,
+		// });
+
 		db.close()
 		return entry
 	} catch(e) {
 		return e
 	}
 }
+
+// ------- delete route -------
+async delRoute(
+	//token,
+	id = ""
+) {	
+	try{
+		const db = new Surreal("http://0.0.0.0:8000/rpc");
+		let entry;
+		await db.signin({
+			user: "root",
+			pass: "root",
+		})
+		await db.use("interface", "interface");
+
+		// if(!await this.compToken(token)) {
+		// 	db.close();
+		// 	throw "Invalid Token";
+		// }
+
+		entry = await this.delete(`interface:${id}`);
+
+		db.close()
+		return entry
+	} catch(e) {
+		return e
+	}
+}
+
+// ------- add interface to appliance -------
+
+// ------- remove interface from device -------
+
+
 
 
 // ------------- Security Functions ------------- // 
@@ -277,7 +565,7 @@ async chgApp(
 // ------- set master key ("should" be kept somwhere else) -------
 	async addMK(key) {
 		try{
-			const db = new Surreal(DB_URL);
+			const db = new Surreal("http://0.0.0.0:8000/rpc");
 			let entry;
 			await db.signin({
 				user: "root",
@@ -299,7 +587,7 @@ async chgApp(
 // ------- get master key -------
 	async getMK() {
 		try{
-			const db = new Surreal(DB_URL);
+			const db = new Surreal("http://0.0.0.0:8000/rpc");
 			let entry;
 			await db.signin({
 				user: "root",
@@ -319,7 +607,7 @@ async chgApp(
 // ------- add token -------
 	async addToken(passwd) {
 		try{
-			const db = new Surreal(DB_URL);
+			const db = new Surreal("http://0.0.0.0:8000/rpc");
 			let entry;
 			await db.signin({
 				user: "root",
@@ -345,7 +633,7 @@ async chgApp(
 // ------- get token ------- 
 	async getToken() {
 		try{
-			const db = new Surreal(DB_URL);
+			const db = new Surreal("http://0.0.0.0:8000/rpc");
 			let entry;
 			await db.signin({
 				user: "root",
@@ -370,7 +658,7 @@ async chgApp(
 // ------- add user ------- 
 	async addUser(user, passwd) {
 		try{
-			const db = new Surreal(DB_URL);
+			const db = new Surreal("http://0.0.0.0:8000/rpc");
 			let entry;
 			await db.signin({
 				user: "root",
@@ -388,14 +676,14 @@ async chgApp(
 			db.close()
 			return entry;
 		} catch(e) {
-			return e
+			return e;
 		}
 	}
 
 // ------- delete user -------
 	async delUser(user) {
 		try{
-			const db = new Surreal(DB_URL);
+			const db = new Surreal("http://0.0.0.0:8000/rpc");
 			let entry;
 			await db.signin({
 				user: "root",
@@ -415,7 +703,7 @@ async chgApp(
 // ------- get user -------
 	async getUser(user) {
 		try{
-			const db = new Surreal(DB_URL);
+			const db = new Surreal("http://0.0.0.0:8000/rpc");
 			let entry;
 			await db.signin({
 				user: "root",
@@ -435,7 +723,7 @@ async chgApp(
 	// ------- compare user -------
 	async compUser(user, passwd) {
 		try{
-			const db = new Surreal(DB_URL);
+			const db = new Surreal("http://0.0.0.0:8000/rpc");
 			let entry;
 			await db.signin({
 				user: "root",
@@ -468,7 +756,7 @@ async chgApp(
 	// ------- compare user -------
 	async compToken(token) {
 		try{
-			const db = new Surreal(DB_URL);
+			const db = new Surreal("http://0.0.0.0:8000/rpc");
 			let entry;
 			await db.signin({
 				user: "root",

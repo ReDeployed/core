@@ -3,7 +3,7 @@
 const filePath = import.meta.url;
 const file = filePath.substring(filePath.lastIndexOf("/") + 1);
 
-class ChkpHandler{
+class APIHandler{
 
 	// ------- pingChkp -------
 

@@ -17,6 +17,7 @@
     showResults = true;
   }
 </script>
+
 <style>
   .grid-container {
     display: grid;
@@ -89,11 +90,7 @@
   }
 </style>
 
-
-
-
 <h1 style="padding-left: 10rem;">Input Validation</h1>
-
 <div class="grid-container">
   <div class="grid-item">
     <label for="ipAddress" class="input-label"></label>
@@ -115,11 +112,9 @@
     <input type="text" id="hostname" class="input-field" placeholder="Hostname" bind:value="{hostname}">
   </div>
 </div>
-
 <div class="button-container">
   <button on:click="{validateFields}" class="button button-primary">Check Validity</button>
 </div>
-
 <div class="results-container">
   {#if showResults}
     <p>Hostname: Hostname is hella valid sheeeesh</p>

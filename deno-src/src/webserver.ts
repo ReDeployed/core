@@ -1,9 +1,10 @@
-import { Application, Router, Response } from "https://deno.land/x/oak/mod.ts";
-import { oakCors } from 'https://deno.land/x/cors/mod.ts'
+// Database manager API
+
+import { Application, Router, Response } from "https://deno.land/x/oak@v12.5.0/mod.ts";
 
 import EventHandler from "./eventHandler.js";
 import DatabaseHandler from "./dbHandler.js";
-import ChkpHandler from "./chkpHandler.js";
+import ChkpHandler from "./ChkpHandler.js";
 import Security from "./encryption.ts";
 
 // Server
@@ -12,20 +13,45 @@ const alpnProtocols = ["h2", "http/1.1"];
 const app = new Application();
 const eventHandler = new EventHandler();
 const db = new DatabaseHandler();
-const chkp = new ChkpHandler();
+//const chkp = new ChkpHandler();
 const sec = new Security();
-
 const router = new Router();
 
-// Api Endpoints
+// Overall Api Endpoints
 router.get("/", (ctx) => handleRequest(ctx, "/"));
 router.get("/test", (ctx) => handleRequest(ctx, "/test"));
 router.get("/pingDB", (ctx) => handleRequest(ctx, "/pingDB"));
 router.get("/pingChkp", (ctx) => handleRequest(ctx, "/pingChkp"));
+
+// Manage list
+router.get("/startManage", (ctx) => handleRequest(ctx, "/startManage"));
+router.get("/getManaged", (ctx) => handleRequest(ctx, "/getManaged"));
+router.get("/stopManage", (ctx) => handleRequest(ctx, "/stopManage"));
+
+// Appliances
 router.get("/addApp", (ctx) => handleRequest(ctx, "/addApp"));
 router.get("/listApp", (ctx) => handleRequest(ctx, "/listApp"));
 router.get("/delApp", (ctx) => handleRequest(ctx, "/delApp"));
 router.get("/chgApp", (ctx) => handleRequest(ctx, "/chgApp"));
+router.get("/addToken", (ctx) => handleRequest(ctx, "/addToken"));
+router.get("/getToken", (ctx) => handleRequest(ctx, "/getToken"));
+router.get("/delToken", (ctx) => handleRequest(ctx, "/delToken"));
+router.get("/testToken", (ctx) => handleRequest(ctx, "/testToken"));
+router.get("/auth", (ctx) => handleRequest(ctx, "/auth"));
+
+// Update
+router.get("/update", (ctx) => handleRequest(ctx, "/update"));
+
+// Interfaces
+router.get("/addInt", (ctx) => handleRequest(ctx, "/addInt"));
+router.get("/getInt", (ctx) => handleRequest(ctx, "/getInt"));
+router.get("/delInt", (ctx) => handleRequest(ctx, "/delInt"));
+
+// Diagnostics
+router.get("/diaCPU", (ctx) => handleRequest(ctx, "/diaCPU"));
+router.get("/diaMEM", (ctx) => handleRequest(ctx, "/diaMEM"));
+
+// Security 
 router.get("/addToken", (ctx) => handleRequest(ctx, "/addToken"));
 router.get("/getToken", (ctx) => handleRequest(ctx, "/getToken"));
 router.get("/delToken", (ctx) => handleRequest(ctx, "/delToken"));
@@ -55,8 +81,7 @@ async function handleRequest(ctx: any, path: string) {
 	}
 
 // -------------- Simple API Functions --------------
-	switch (path) {
-
+	switch(path) {
 
 // ------- base (/) -------
 			case "/":
@@ -78,33 +103,45 @@ async function handleRequest(ctx: any, path: string) {
 				response.body = { message: await eventHandler.pingChkp() };
 				break;
 
-// ------- addApp -------
-			case "/addApp": 
-				response.body = { message: await eventHandler.addApp(
-					params["id"],
-					params["hostname"],
-					params["version"],
-				) }
+
+
+// -------------- Appliance API Functions --------------
+
+// ------- start manage -------
+			case "/startManage":
+				response.body = { message: await eventHandler.startManage(
+					params["ip"],
+				) };
 				break;
 
-// ------- listApp -------
-			case "/listApp":
-				response.body = { message: await eventHandler.listApp(
+// ------- stop manage -------
+			case "/stopManage":
+				response.body = { message: await eventHandler.stopManage(
 					params["id"],
 				) };
 				break;
 
-// ------- delApp -------
-			case "/delApp":
-				response.body = { message: await eventHandler.delApp(
-					params["id"],
-				)};
+// ------- stop manage -------
+			case "/getManaged":
+				response.body = { message: await eventHandler.getManaged(
+					params["getIdList"],
+				) };
 				break;
 
-// ------- chgApp -------
-			case "/chgApp":
-				response.body = { message: await eventHandler.chgApp()};
-				break;
+// ------- listApp -------
+			case "/listApp":
+	response.body = { message: await eventHandler.listApp(
+		params["id"],
+	) };
+	break;
+
+// ------- update -------
+			case "/update":
+	response.body = { message: await eventHandler.update() };
+	break;
+
+
+// -------------- Security API Functions --------------
 
 // ------- add Token -------
 			case "/addToken":
@@ -139,12 +176,39 @@ async function handleRequest(ctx: any, path: string) {
 
 // ------- default -------
 			default:
-				console.log(`${file}> default`); // Logging
 				response.body = { message: "Invalid endpoint" };
 				response.status = 404;
 				break;
 		}
-	ctx.response.headers.set("Content-Type", "application/json");
+	ctx.response.headers.set("Content-Type", "application/json");	
+	ctx.response.headers.set("Cache-Control", "no-cache");
+
 	ctx.response.body = response.body;
 	ctx.response.status = response.status || 200;
 }
+
+
+
+
+
+// // ------- addRoute-------
+// case "/addRoute":
+// 	response.body = { message: await eventHandler.getInt(
+// 		params["id"],
+// 		params["route"],
+// 	)};
+// 	break;
+
+// // ------- getRoute -------
+// case "/getRoute":
+// 	response.body = { message: await eventHandler.getInt(
+// 		params["id"],
+// 	)};
+// 	break;
+
+// // ------- delRoute -------
+// case "/delRoute":
+// response.body = { message: await eventHandler.getInt(
+// 	params["id"],
+// )};
+// break;

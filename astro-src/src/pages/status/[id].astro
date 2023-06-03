@@ -10,7 +10,6 @@ const { id } = Astro.params;
     <SvelteSite>
 	</SvelteSite>
     <div style="padding-left: 10rem;">
-        <h1>Editing Device with following ID: {id}</h1>
-        <API astroProp={id} client:visible />
+        <API astroProp={id} client:visible/>
     </div>
 </Layout>

@@ -1,10 +1,12 @@
 // Handles events from webserver
 
 import DatabaseHandler from "./dbHandler.js";
-import ChkpHandler from "./chkpHandler.js";
+import SIMAPIHandler from "./chkpSim.js";
+import ChkpHandler from "./ChkpHandler.js"
 
 const db = new DatabaseHandler();
-const chkp = new ChkpHandler();
+const chkpSim = new SIMAPIHandler();
+const chkHandler = new ChkpHandler();
 
 class EventHandler{
 
@@ -32,11 +34,78 @@ class EventHandler{
 		}
 	}
 
+
+
+
+// ------- start manage -------
+	async startManage(ip) {
+        const SID = await chkHandler.getSID(ip, "admin", "p@ssw0rd");
+        const hostname = await chkHandler.getHostname(SID, ip);
+        let id = hostname.name
+        await db.startManage(id, ip);
+		return await db.addApp(
+			id, 
+			ip,
+			await chkHandler.getDiagnostics(SID, ip, "cpu"),
+			await chkHandler.getDiagnostics(SID, ip, "memory"),
+			await chkHandler.getAllInterfaces(SID, ip),
+			await chkHandler.getVersion(SID, ip),
+		);
+	}
+
+// ------- stop manage -------
+	async stopManage(id) {
+		await db.stopManage(id);
+		return db.delApp(id);
+	}
+
+// ------- start manage -------
+	async getManaged(getIdList) {
+		return await db.getManaged(getIdList);
+	}
+
+
+
+// ------- update -------
+async update() {
+
+	const appList = await db.getManaged();
+
+	for(const entry of appList) {
+		
+		const id = entry.id.split(":")[1];
+		const ip = entry.ip;
+        const SID = await chkHandler.getSID(ip, "admin", "p@ssw0rd");
+		// Update
+		return await db.addApp(
+			id, 
+			ip,
+			await chkHandler.getDiagnostics(SID, ip, "cpu"),
+			await chkHandler.getDiagnostics(SID, ip, "memory"),
+			await chkHandler.getAllInterfaces(SID, ip),
+			await chkHandler.getVersion(SID, ip),
+		);
+    }
+}
+
+
+
+
+
 // ------- addApp -------
 	async addApp(
-		id, hostname, version
+		id, ip
 	) {
-		return await db.addApp(id, hostname, version);
+		await db.startManage(id, ip);
+		await db.addApp(
+			id, 
+			ip,
+			await chkpSim.showDiagnosticsCPU,
+			await chkpSim.showDiagnosticsMEM,
+			await chkpSim.showInterfaces,
+			await chkp.getVersion,
+			)
+		
 	}
 
 // ------- listApp -------
@@ -55,6 +124,59 @@ class EventHandler{
 	async chgApp() {
 		return;
 	}
+
+// ------- add token -------
+	async addToken(key) {
+		return await db.addToken(key);
+	}
+
+// ------- get token -------
+	async getToken() {
+		return await db.getToken();
+	}
+
+// ------- delete token -------
+	async delToken() {
+		return await db.delToken();
+	}
+
+// ------- test token -------
+	async testToken() {
+		return await db.testToken();
+	}
+
+// ------- auth -------
+	async auth(user, passwd) {
+		// Check if user exists
+
+		console.log(user, passwd);
+
+		if(await db.compUser(user, passwd)) {
+			await db.addToken(passwd);
+			const token = await db.getToken();
+			return token["token"];
+		} else {
+			return "Unsuccsessfull login attempt"
+		}
+		
+	}
+
+
+
+
+
+
+// ------- diaCPU -------
+	async diaCPU(id) {
+		return await db.getDiagnostics(id, "cpu");
+	}
+
+// ------- diaMEM -------
+	async diaMEM(id) {
+		return await db.getDiagnostics(id, "mem");
+	}
+
+
 
 // ------- add token -------
 	async addToken(key) {

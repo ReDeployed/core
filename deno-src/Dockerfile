@@ -8,4 +8,4 @@ WORKDIR /app
 COPY deno-src/src .
 
 # Start 
-CMD ["deno", "run", "--unsafely-ignore-certificate-errors", "--unstable", "--allow-net", "--allow-read", "webserver.ts"]
+CMD ["deno", "run", "--unstable", "--allow-net", "--allow-read", "webserver.ts"]

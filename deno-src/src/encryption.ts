@@ -16,7 +16,7 @@ class Security{
 
 	// ------- generate token -------
 	async createToken(key, passwd) {
-		const token = "Token-" + await this.createUUID();
+		const token = "MeinToken" //await this.createUUID();
 		const encryptedToken = await this.encryptAES(key, true, passwd, token)
 		console.log("Token: ", token);
 		console.log("Enc Token: ", encryptedToken);

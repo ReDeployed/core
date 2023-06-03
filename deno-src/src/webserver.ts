@@ -1,10 +1,9 @@
-// Database manager API
-
-import { Application, Router, Response } from "https://deno.land/x/oak@v12.5.0/mod.ts";
+import { Application, Router, Response } from "https://deno.land/x/oak/mod.ts";
+import { oakCors } from 'https://deno.land/x/cors/mod.ts'
 
 import EventHandler from "./eventHandler.js";
 import DatabaseHandler from "./dbHandler.js";
-import ChkpHandler from "./ChkpHandler.js";
+import ChkpHandler from "./chkpHandler.js";
 import Security from "./encryption.ts";
 
 // Server
@@ -13,21 +12,25 @@ const alpnProtocols = ["h2", "http/1.1"];
 const app = new Application();
 const eventHandler = new EventHandler();
 const db = new DatabaseHandler();
-//const chkp = new ChkpHandler();
+const chkp = new ChkpHandler();
 const sec = new Security();
+
 const router = new Router();
 
-// Overall Api Endpoints
+// Api Endpoints
 router.get("/", (ctx) => handleRequest(ctx, "/"));
 router.get("/test", (ctx) => handleRequest(ctx, "/test"));
 router.get("/pingDB", (ctx) => handleRequest(ctx, "/pingDB"));
 router.get("/pingChkp", (ctx) => handleRequest(ctx, "/pingChkp"));
-router.get("/startManage", (ctx) => handleRequest(ctx, "/startManage"));
-router.get("/stopManage", (ctx) => handleRequest(ctx, "/stopManage"));
+router.get("/addApp", (ctx) => handleRequest(ctx, "/addApp"));
 router.get("/listApp", (ctx) => handleRequest(ctx, "/listApp"));
-router.get("/update", (ctx) => handleRequest(ctx, "/update"));
+router.get("/delApp", (ctx) => handleRequest(ctx, "/delApp"));
+router.get("/chgApp", (ctx) => handleRequest(ctx, "/chgApp"));
+router.get("/addToken", (ctx) => handleRequest(ctx, "/addToken"));
+router.get("/getToken", (ctx) => handleRequest(ctx, "/getToken"));
+router.get("/delToken", (ctx) => handleRequest(ctx, "/delToken"));
+router.get("/testToken", (ctx) => handleRequest(ctx, "/testToken"));
 router.get("/auth", (ctx) => handleRequest(ctx, "/auth"));
-
 
 app.use(router.routes());
 app.use(router.allowedMethods());
@@ -52,7 +55,8 @@ async function handleRequest(ctx: any, path: string) {
 	}
 
 // -------------- Simple API Functions --------------
-	switch(path) {
+	switch (path) {
+
 
 // ------- base (/) -------
 			case "/":
@@ -74,38 +78,55 @@ async function handleRequest(ctx: any, path: string) {
 				response.body = { message: await eventHandler.pingChkp() };
 				break;
 
-// ------- start manage -------
-			case "/startManage":
-				response.body = { message: await eventHandler.startManage(
-					params["ip"],
-				) };
-				break;
-
-// ------- stop manage -------
-			case "/stopManage":
-				response.body = { message: await eventHandler.stopManage(
+// ------- addApp -------
+			case "/addApp": 
+				response.body = { message: await eventHandler.addApp(
 					params["id"],
-				) };
-				break;
-
-// ------- stop manage -------
-			case "/getManaged":
-				response.body = { message: await eventHandler.getManaged(
-					params["getIdList"],
-				) };
+					params["hostname"],
+					params["version"],
+				) }
 				break;
 
 // ------- listApp -------
 			case "/listApp":
-	response.body = { message: await eventHandler.listApp(
-		params["id"],
-	) };
-	break;
+				response.body = { message: await eventHandler.listApp(
+					params["id"],
+				) };
+				break;
 
-// ------- update -------
-			case "/update":
-	response.body = { message: await eventHandler.update() };
-	break;
+// ------- delApp -------
+			case "/delApp":
+				response.body = { message: await eventHandler.delApp(
+					params["id"],
+				)};
+				break;
+
+// ------- chgApp -------
+			case "/chgApp":
+				response.body = { message: await eventHandler.chgApp()};
+				break;
+
+// ------- add Token -------
+			case "/addToken":
+				response.body = { message: await eventHandler.addToken(
+					params["key"],
+				)};
+				break;
+
+// ------- get token -------
+			case "/getToken":
+				response.body = { message: await eventHandler.getToken()};
+				break;
+
+// ------- delete token -------
+			case "/delToken":
+				response.body = { message: await eventHandler.delToken()};
+				break;
+	
+// ------- test token -------
+			case "/testToken":
+				response.body = { message: await eventHandler.testToken()};
+				break;
 
 // ------- test token -------
 			case "/auth":
@@ -115,41 +136,15 @@ async function handleRequest(ctx: any, path: string) {
 				)};
 				break;
 
+
 // ------- default -------
 			default:
+				console.log(`${file}> default`); // Logging
 				response.body = { message: "Invalid endpoint" };
 				response.status = 404;
 				break;
 		}
-	ctx.response.headers.set("Content-Type", "application/json");	
-	ctx.response.headers.set("Cache-Control", "no-cache");
-
+	ctx.response.headers.set("Content-Type", "application/json");
 	ctx.response.body = response.body;
 	ctx.response.status = response.status || 200;
 }
-
-
-
-
-
-// // ------- addRoute-------
-// case "/addRoute":
-// 	response.body = { message: await eventHandler.getInt(
-// 		params["id"],
-// 		params["route"],
-// 	)};
-// 	break;
-
-// // ------- getRoute -------
-// case "/getRoute":
-// 	response.body = { message: await eventHandler.getInt(
-// 		params["id"],
-// 	)};
-// 	break;
-
-// // ------- delRoute -------
-// case "/delRoute":
-// response.body = { message: await eventHandler.getInt(
-// 	params["id"],
-// )};
-// break;

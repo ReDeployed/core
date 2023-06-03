@@ -1,12 +1,10 @@
 // Handles events from webserver
 
 import DatabaseHandler from "./dbHandler.js";
-import SIMAPIHandler from "./chkpSim.js";
-import ChkpHandler from "./ChkpHandler.js"
+import ChkpHandler from "./chkpHandler.js";
 
 const db = new DatabaseHandler();
-const chkpSim = new SIMAPIHandler();
-const chkHandler = new ChkpHandler();
+const chkp = new ChkpHandler();
 
 class EventHandler{
 
@@ -34,31 +32,11 @@ class EventHandler{
 		}
 	}
 
-// ------- start manage -------
-	async startManage(ip) {
-        const SID = await chkHandler.getSID(ip, "admin", "p@ssw0rd");
-        const hostname = await chkHandler.getHostname(SID, ip);
-        let id = hostname.name
-        await db.startManage(id, ip);
-		return await db.addApp(
-			id, 
-			ip,
-			await chkHandler.getDiagnostics(SID, ip, "cpu"),
-			await chkHandler.getDiagnostics(SID, ip, "memory"),
-			await chkHandler.getAllInterfaces(SID, ip),
-			await chkHandler.getVersion(SID, ip),
-		);
-	}
-
-// ------- stop manage -------
-	async stopManage(id) {
-		await db.stopManage(id);
-		return db.delApp(id);
-	}
-
-// ------- start manage -------
-	async getManaged(getIdList) {
-		return await db.getManaged(getIdList);
+// ------- addApp -------
+	async addApp(
+		id, hostname, version
+	) {
+		return await db.addApp(id, hostname, version);
 	}
 
 // ------- listApp -------
@@ -66,43 +44,36 @@ class EventHandler{
 		return await db.listApp(id);
 	}
 
-// ------- addApp -------
-	async addApp(
-		id, ip
+// ------- delApp -------
+	async delApp(
+		id,
 	) {
-		await db.startManage(id, ip);
-		await db.addApp(
-			id, 
-			ip,
-			await chkpSim.showDiagnosticsCPU,
-			await chkpSim.showDiagnosticsMEM,
-			await chkpSim.showInterfaces,
-			await chkp.getVersion,
-			)
-		
+		return await db.delApp(id);
 	}
 
-// ------- update -------
-	async update() {
+// ------- chgApp -------
+	async chgApp() {
+		return;
+	}
 
-		const appList = await db.getManaged();
+// ------- add token -------
+	async addToken(key) {
+		return await db.addToken(key);
+	}
 
-		for(const entry of appList) {
-			
-			const id = entry.id.split(":")[1];
-			const ip = entry.ip;
+// ------- get token -------
+	async getToken() {
+		return await db.getToken();
+	}
 
-			// Update
-			return await db.addApp(
-				id, 
-				ip,
-				await chkpSim.showDiagnosticsCPU(),
-				await chkpSim.showDiagnosticsMEM(),
-				await chkpSim.showInterfaces(),
-				await chkpSim.showVersion(),
-				);	}
+// ------- delete token -------
+	async delToken() {
+		return await db.delToken();
+	}
 
-
+// ------- test token -------
+	async testToken() {
+		return await db.testToken();
 	}
 
 // ------- auth -------
@@ -120,6 +91,7 @@ class EventHandler{
 		}
 		
 	}
+
 
 }
 

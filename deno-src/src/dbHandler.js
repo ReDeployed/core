@@ -4,7 +4,7 @@ import Surreal from "https://deno.land/x/surrealdb@v0.7.3/mod.ts";
 import Security from "./encryption.ts"
 
 const sec = new Security();
-const DB_URL = "http://127.0.0.1:8000/rpc"
+const DB_URL = 'http://surreal:8000/rpc'
 
 // ------------- Database Class ------------- //
 
@@ -14,123 +14,35 @@ class DatabaseHandler{
 // ------------- Database Functions ------------- // 
 
 // ------- ping -------
-async pingDB(/*token*/) {	
-	try{
-		const db = new Surreal(DB_URL);
-		await db.signin({
-			user: "root",
-			pass: "root",
-		})
-
-		// if(!await this.compToken(token)) {
-		// 	db.close();
-		// 	throw "Invalid Token";
-		// }
-
-		await db.use("test", "test");
-		db.close()
-	} catch(e) {
-		return e
-	}
-	return "pong"
-}
-
-// ------- startManage -------
-	async startManage(id, ip) {
+	async pingDB(token) {	
 		try{
 			const db = new Surreal(DB_URL);
-			let entry;
 			await db.signin({
 				user: "root",
 				pass: "root",
 			})
-			await db.use("manage", "manage");
+
+			if(!await this.compToken(token)) {
+				db.close();
+				throw "Invalid Token";
+			}
 
 
-			// if(!await this.compToken(token)) {
-			// 	db.close();
-			// 	throw "Invalid Token";
-			// }
 
-			entry = await db.update(`manage:${id}`, {
-				id: id,
-				ip: ip,
-				updated_at: new Date(),
-			})
+			await db.use("test", "test");
 			db.close()
-			return entry;
 		} catch(e) {
 			return e
 		}
+		return "pong"
 	}
-
-	// ------- getManaged -------
-	async getManaged(getIdList = false) {
-		try{
-			const db = new Surreal(DB_URL);
-			let entry;
-			await db.signin({
-				user: "root",
-				pass: "root",
-			})
-			await db.use("manage", "manage");
-			// if(!await this.compToken(token)) {
-			// 	db.close();
-			// 	throw "Invalid Token";
-			// }
-
-			entry = await db.select("manage");
-
-			if(getIdList) {
-				const ids = entry.map(item => item.id);
-				entry = ids;
-			}
-
-			db.close()
-			return entry;
-		} catch(e) {
-			return e
-		}
-	}
-
-// ------- stopManage -------
-	async stopManage(id) {
-		try{
-			const db = new Surreal(DB_URL);
-			let entry;
-			await db.signin({
-				user: "root",
-				pass: "root",
-			})
-			await db.use("manage", "manage");
-
-			if(id == "") {
-				id = Math.random().toString(36).substr(2, 10);
-			}
-
-			// if(!await this.compToken(token)) {
-			// 	db.close();
-			// 	throw "Invalid Token";
-			// }
-
-			entry = await db.delete(`manage:${id}`)
-			db.close()
-			return entry;
-		} catch(e) {
-			return e
-		}s
-	}
-
 
 // ------- add Application -------
 	async addApp(
 		//token,
-		id,
-		ip,
-		diaCPU,
-		diaMEM,
-		interfaces,
-		version,
+		id = Math.random().toString(36).substr(2, 10),
+		hostname = "No Hostname",
+		version = "No Version"
 	) {
 		try{
 			const db = new Surreal(DB_URL);
@@ -141,23 +53,21 @@ async pingDB(/*token*/) {
 			})
 			await db.use("appliance", "appliance");
 
+			if(id == "") {
+				id = Math.random().toString(36).substr(2, 10);
+			}
+
 			// if(!await this.compToken(token)) {
 			// 	db.close();
 			// 	throw "Invalid Token";
 			// }
 
-			entry = await db.update(`appliance:${id}`, {
+			entry = await db.create(`appliance:${id}`, {
 				id: id,
-				ip: ip,
 				updated_at: new Date(),
-				diaCPU: diaCPU,
-				diaMEM: diaMEM,
-				interfaces: interfaces,
+				hostname: hostname,
 				version: version,
 			})
-
-			console.log(entry)
-
 			db.close()
 			return entry;
 		} catch(e) {
@@ -183,6 +93,8 @@ async pingDB(/*token*/) {
 			// 	db.close();
 			// 	throw "Invalid Token";
 			// }
+
+			console.log(id);
 
 			if(id == "") {
 				entry = await db.select("appliance");
@@ -231,6 +143,133 @@ async pingDB(/*token*/) {
 		}
 	}
 
+// ------- change applications -------
+	async chgApp(
+		//token,
+		id = "",
+		field = "",
+		value = "",
+	) {
+		try{
+			const db = new Surreal(DB_URL);
+			let entry;
+			await db.signin({
+				user: "root",
+				pass: "root",
+			})
+			await db.use("appliance", "appliance");
+
+			if(!await this.compToken(token)) {
+				db.close();
+				throw "Invalid Token";
+			}
+
+
+				switch(field) {
+					case "id":
+						entry = await db.change(`appliance:${id}`, {
+							id: value,
+							updated_at: new Date(),
+						});
+						break;
+
+					case "hostname":
+						entry = await db.change(`appliance:${id}`, {
+							hostname: value,
+							updated_at: new Date(),
+						});
+						break;
+					
+					case "version":
+						entry = await db.change(`appliance:${id}`, {
+							version: value,
+							updated_at: new Date(),
+						});
+						break;
+				}
+
+			db.close()
+			console.log(entry);
+			return entry
+		} catch(e) {
+			return e
+		}
+	}
+
+// ------- delete applications -------
+
+async delApp(
+	id = ""
+) {
+	console.log(`${file}> delApp`); // Logging
+	try{
+		let db = new Surreal(DB_URL);
+		let entry;
+		await db.signin({
+			user: "root",
+			pass: "root",
+		})
+		await db.use("appliance", "appliance");
+
+		if(id == "") {
+			entry = await db.delete("appliance");
+		} else {
+			entry = await db.delete(`appliance:${id}`);
+		}
+
+		db.close()
+		return entry
+	} catch(e) {
+		return e
+	}
+}
+
+// ------- change applications -------
+
+async chgApp(
+	id = "",
+	field = "",
+	value = "",
+) {
+	console.log(`${file}> chgApp`); // Logging
+	try{
+		let db = new Surreal(DB_URL);
+		let entry;
+		await db.signin({
+			user: "root",
+			pass: "root",
+		})
+		await db.use("appliance", "appliance");
+
+			switch(field) {
+				case "id":
+					entry = await db.change(`appliance:${id}`, {
+						id: value,
+						updated_at: new Date(),
+					});
+					break;
+
+				case "hostname":
+					entry = await db.change(`appliance:${id}`, {
+						hostname: value,
+						updated_at: new Date(),
+					});
+					break;
+				
+				case "version":
+					entry = await db.change(`appliance:${id}`, {
+						version: value,
+						updated_at: new Date(),
+					});
+					break;
+			}
+
+		db.close()
+		return entry
+	} catch(e) {
+		return e
+	}
+}
 
 
 // ------------- Security Functions ------------- // 
@@ -349,7 +388,7 @@ async pingDB(/*token*/) {
 			db.close()
 			return entry;
 		} catch(e) {
-			return e;
+			return e
 		}
 	}
 

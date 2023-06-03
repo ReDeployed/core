@@ -17,7 +17,6 @@
     showResults = true;
   }
 </script>
-
 <style>
   .grid-container {
     display: grid;

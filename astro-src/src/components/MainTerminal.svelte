@@ -120,9 +120,9 @@ main {
             </div>
             <div class="terminal-body">
             <div class="terminal-line">ls -la</div>
-            <p class="text-terminal-line" data-terminal-line=" ">-&gt; Introductiosn.txt  /  Exploit.txt  /  .credentials.bin</p>
+            <p class="text-terminal-line" data-terminal-line=" ">-&gt; Introduction.txt</p>
             <br>
-            <div class="terminal-line">cat Introductions.txt</div>
+            <div class="terminal-line">cat Introduction.txt</div>
             <p class="text-terminal-line" data-terminal-line="01">What is the Re:Deploy FireWall Manager?</p>
             <p class="text-terminal-line" data-terminal-line="02"></p>
             <p class="text-terminal-line" data-terminal-line="03"> - ReDeploy is a Firewall Manager that primarily targets CheckPoint Appliances. </p>

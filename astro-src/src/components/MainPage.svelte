@@ -51,7 +51,7 @@
             </li>
         </ul>
     </div>
-    <h1 class="terminal-text">
+    <h1 class="font-bold terminal-text">
         Welcome to Re:Deploy Firewall Manager<span class="blinking-underscore">_</span >
     </h1>
 </body>

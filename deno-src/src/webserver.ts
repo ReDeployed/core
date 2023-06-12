@@ -1,11 +1,8 @@
 // Database manager API
 
 import { Application, Router, Response } from "https://deno.land/x/oak@v12.5.0/mod.ts";
-import { create } from "https://deno.land/x/djwt@v2.2/mod.ts";
-
 import EventHandler from "./eventHandler.js";
 import DatabaseHandler from "./dbHandler.js";
-import ChkpHandler from "./ChkpHandler.js";
 import Security from "./encryption.ts";
 
 // Server
@@ -14,7 +11,6 @@ const alpnProtocols = ["h2", "http/1.1"];
 const app = new Application();
 const eventHandler = new EventHandler();
 const db = new DatabaseHandler();
-//const chkp = new ChkpHandler();
 const sec = new Security();
 const router = new Router();
 
@@ -53,7 +49,6 @@ router.get("/diaCPU", (ctx) => handleRequest(ctx, "/diaCPU"));
 router.get("/diaMEM", (ctx) => handleRequest(ctx, "/diaMEM"));
 
 // Security
-router.get("/jwtToken", (ctx) => handleRequest(ctx, "/jwtToken"));
 router.get("/addToken", (ctx) => handleRequest(ctx, "/addToken"));
 router.get("/getToken", (ctx) => handleRequest(ctx, "/getToken"));
 router.get("/delToken", (ctx) => handleRequest(ctx, "/delToken"));
@@ -77,7 +72,7 @@ async function handleRequest(ctx: any, path: string) {
 
 	// Parse the Parameters
 	const paramsURL = new URLSearchParams(queryString);
-	const params = {};
+	const params: any = {};
 	for (const [key, value] of paramsURL.entries()) {
 		params[key] = value;
 	}
@@ -97,19 +92,6 @@ async function handleRequest(ctx: any, path: string) {
 
 		case "/pingChkp":
 			response.body = { message: await eventHandler.pingChkp() };
-			break;
-
-		case "/jwtToken":
-			const TOKEN = await create(
-				{ alg: "HS512", typ: "JWT" }, 
-				{ user: params["user"], pass: params["pass"] }, 
-				"secret"
-			);
-			response.body = { message: 
-				{
-					key: TOKEN
-				}
-			};
 			break;
 
 		case "/startManage":

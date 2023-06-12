@@ -1,14 +1,18 @@
 import { crypto } from "https://deno.land/std@0.184.0/crypto/mod.ts";
-import { toHashString } from "https://deno.land/std@0.184.0/crypto/to_hash_string.ts";
-import {encode as he} from "https://deno.land/std/encoding/hex.ts";
-import {decode as hd} from "https://deno.land/std/encoding/hex.ts";
-import { AES } from "https://deno.land/x/god_crypto/aes.ts";
+import {encode as he} from "https://deno.land/std@0.190.0/encoding/hex.ts";
+import {decode as hd} from "https://deno.land/std@0.190.0/encoding/hex.ts";
 import { createHash } from "https://deno.land/std@0.119.0/hash/mod.ts";
 
 class Security{ 
-	async createUUID() {
+	createUUID() {
 		const uuid =  crypto.randomUUID();
 		return uuid;
+	}
+
+	importDBKey(rawKey) {
+		const values = Object.values(rawKey.mk);
+		const key = Uint8Array.from(values);
+		return key
 	}
 
 	async createToken(key, passwd) {
@@ -57,12 +61,6 @@ class Security{
 		);
 
 		return key;
-	}
-
-	async importDBKey(rawKey) {
-		const values = Object.values(rawKey.mk);
-		const key = Uint8Array.from(values);
-		return key
 	}
 
 	async generateIV(key) {

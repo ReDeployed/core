@@ -20,8 +20,6 @@ services:
       context: .
       dockerfile: astro-src/Dockerfile
     hostname: "astro"
-    #ports:
-    #  - '8085:8085' # Astro HTTP Port
     networks:
       backend:
         ipv4_address: 172.20.0.3
@@ -39,8 +37,6 @@ services:
       context: .
       dockerfile: deno-src/Dockerfile
     hostname: "deno"
-    #ports:
-    #  - '8080:8080' # Deno HTTP Port
     networks:
       backend:
         ipv4_address: 172.20.0.5

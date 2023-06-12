@@ -1,26 +1,39 @@
-import {APIRoute} from 'astro';
+import { APIRoute } from 'astro';
 
-// API PSK
 // @TODO: Fetch this from database
 const PSK = 'testkey';
-const GET_ENDPOINTS = ["version", "status"]
 
+// endpoints
+const GET_ENDPOINTS = ["version", "status"]
+const POST_ENDPOINTS = ["auth"]
+
+// in mem token store
 const ACCESS_TOKENS: {
     [key: string]: string
 } = {};
 
-const POST_ENDPOINTS = ["auth"]
+// auth bool
+let AUTHORIZED = false;
 
-function generateAuthToken(fetched_psk : string): string | null {
-    const TIMESTAMP = Math.floor(Date.now() / 1000);
-
+async function generateAuthToken(fetched_user : string, fetched_psk : string): string | null {
     if (fetched_psk !== PSK) {
         return null;
     }
 
-    let token = `${PSK}${TIMESTAMP}`;
-    token = btoa(token);
-    return token;
+    try {
+        let token = await fetch(`https://deno:8080/jwtToken`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'user': fetched_user,
+            'pass': fetched_psk
+        }})
+
+        return token.json()[""];
+    } catch (error) {
+        console.log('Error:', error);
+        return null;
+    }
 }
 
 export const post: APIRoute = async ({params, request}) => {
@@ -30,7 +43,7 @@ export const post: APIRoute = async ({params, request}) => {
     if (POST_ENDPOINTS.includes(ID)) {
         switch (ID) {
             case "auth":
-                MESSAGE = generateAuthToken(DATA.key).toString();
+                MESSAGE = await generateAuthToken(DATA.user, DATA.key).toString();
                 ACCESS_TOKENS["key"] = MESSAGE;
                 break;
 
@@ -57,7 +70,6 @@ export const post: APIRoute = async ({params, request}) => {
 }
 
 export const get: APIRoute = async ({params, request}) => {
-    let AUTHORIZED = false;
     const ID = params.id;
     let MESSAGE = "";
     const ACC_TOKEN = request

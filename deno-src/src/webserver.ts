@@ -1,6 +1,7 @@
 // Database manager API
 
 import { Application, Router, Response } from "https://deno.land/x/oak@v12.5.0/mod.ts";
+import { create } from "https://deno.land/x/djwt@v2.2/mod.ts";
 
 import EventHandler from "./eventHandler.js";
 import DatabaseHandler from "./dbHandler.js";
@@ -51,7 +52,8 @@ router.get("/delInt", (ctx) => handleRequest(ctx, "/delInt"));
 router.get("/diaCPU", (ctx) => handleRequest(ctx, "/diaCPU"));
 router.get("/diaMEM", (ctx) => handleRequest(ctx, "/diaMEM"));
 
-// Security 
+// Security
+router.get("/jwtToken", (ctx) => handleRequest(ctx, "/jwtToken"));
 router.get("/addToken", (ctx) => handleRequest(ctx, "/addToken"));
 router.get("/getToken", (ctx) => handleRequest(ctx, "/getToken"));
 router.get("/delToken", (ctx) => handleRequest(ctx, "/delToken"));
@@ -103,7 +105,16 @@ async function handleRequest(ctx: any, path: string) {
 				response.body = { message: await eventHandler.pingChkp() };
 				break;
 
-
+			case "/jwtToken":
+				const USER = params["user"];
+				const PASS = params["pass"];
+				const TOKEN = await create({ alg: "HS512", typ: "JWT" }, { user: USER, pass: PASS }, "secret");
+				response.body = { message: 
+					JSON.parse(
+						"key": TOKEN 
+					);
+				};
+				break;
 
 // -------------- Appliance API Functions --------------
 

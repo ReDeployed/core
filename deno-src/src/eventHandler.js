@@ -64,8 +64,6 @@ class EventHandler{
 		return await db.getManaged(getIdList);
 	}
 
-
-
 // ------- update -------
 async update() {
 
@@ -176,6 +174,10 @@ async update() {
 		return await db.getDiagnostics(id, "mem");
 	}
 
+
+	async jwtToken(key) {
+		
+	}
 
 
 // ------- add token -------

@@ -20,5 +20,5 @@ COPY astro-src/src ./src
 RUN npm install
 RUN npm run build
 
-# Start deno
-CMD ["npm", "run", "denorun"]
+# Start Astro with deno backend
+CMD ["deno", "run", "--allow-net", "--allow-read", "--allow-env", "./dist/server/entry.mjs"]

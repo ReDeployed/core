@@ -8,7 +8,7 @@ export let astroProp;
 
 onMount(async () => {
     try {
-        const res = await fetch("https://localhost:8080/listApp?id=" + astroProp, {
+        const res = await fetch("https://10.10.7.121:8080/listApp?id=" + astroProp, {
             mode: "cors",
             method: "GET",
         });

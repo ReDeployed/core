@@ -214,6 +214,34 @@ async update() {
 		
 	}
 
+	async startManage(ip) {
+        await db.startManage("test", ip);
+        return await db.addApp(
+            "test", 
+            ip,
+            await chkpSim.showDiagnosticsCPU(),
+            await chkpSim.showDiagnosticsMEM(),
+            await chkpSim.showInterfaces(),
+            await chkpSim.showVersion(),
+        );
+    }
+
+	async update() {
+
+		const appList = await db.getManaged();
+	
+		for(const entry of appList) {
+			return await db.addApp(
+				"test", 
+				"1.1.1.1",
+				await chkpSim.showDiagnosticsCPU(),
+				await chkpSim.showDiagnosticsMEM(),
+				await chkpSim.showInterfaces(),
+				await chkpSim.showVersion(),
+			);
+		}
+	}
+
 
 }
 

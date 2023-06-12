@@ -7,6 +7,11 @@ function validateIpAddress(ipAddress) {
         ipAddressValid = ipParts.every(part => parseInt(part, 10) <= 253);
     }
 
+    // Check if IP address is not "127.0.0.1"
+    if (ipAddressValid && ipAddress === "127.0.0.1") {
+        ipAddressValid = false;
+    }
+
     return ipAddressValid;
 }
 

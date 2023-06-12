@@ -27,24 +27,7 @@
                 <a href="/"><i class="fas fa-home"/></a>
             </li>
             <li>
-                <a
-                    href="/listing"
-                    on:mouseenter={toggleConfigHover}
-                    on:mouseleave={toggleConfigHover}>
-                    <i class="fas fa-cog" class:darkened={isConfigHovered || isAddHovered}/>
-                </a>
-                <ul
-                    class="add_optionbackground"
-                    class:visible={isConfigHovered || isAddHovered}
-                    on:mouseenter={toggleAddHover}
-                    on:mouseleave={toggleAddHover}>
-                    <li>
-                        <a href="/listing"><i class="fas fa-plus"/></a>
-                    </li>
-                </ul>
-            </li>
-            <li>
-                <a href="/deploy"><i class="fas fa-code"/></a>
+                <a href="/listing"><i class="fas fa-cog"/></a>
             </li>
             <li>
                 <a href="/settings"><i class="fas fa-key"/></a>
@@ -100,10 +83,6 @@
         display: none;
     }
 
-    .left-nav li:hover > ul {
-        display: block;
-    }
-
     .left-nav li a i {
         display: block;
         text-align: center;
@@ -152,6 +131,7 @@
         display: inline-block;
         position: relative;
         padding-left: 3em;
+        padding-top: 1em;
     }
 
     .terminal-text:before {
@@ -182,9 +162,6 @@
         animation: blink 1s infinite;
     }
 
-    .add_optionbackground {
-        background-color: #34495e;
-    }
 
     @keyframes blink {
         0% {
@@ -205,16 +182,6 @@
         display: none;
     }
 
-    .add_optionbackground {
-        background-color: #34495e;
-    }
 
-    .left-nav li:nth-child(2).visible a i.fas.fa-cog,
-    .left-nav li:nth-child(2).visible a i.fas.fa-cog,
-    .left-nav li:nth-child(2).visible ul.add_optionbackground,
-    .left-nav li:nth-child(2).visible ul.add_optionbackground:hover,
-    .left-nav li:nth-child(2):hover a i.fas.fa-cog,
-    .left-nav li:nth-child(2):hover ul.add_optionbackground {
-        color: #fff;
-    }
+
 </style>

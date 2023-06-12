@@ -1,10 +1,8 @@
 // Database manager API
 
 import { Application, Router, Response } from "https://deno.land/x/oak@v12.5.0/mod.ts";
-
 import EventHandler from "./eventHandler.js";
 import DatabaseHandler from "./dbHandler.js";
-import ChkpHandler from "./ChkpHandler.js";
 import Security from "./encryption.ts";
 
 // Server
@@ -13,7 +11,6 @@ const alpnProtocols = ["h2", "http/1.1"];
 const app = new Application();
 const eventHandler = new EventHandler();
 const db = new DatabaseHandler();
-//const chkp = new ChkpHandler();
 const sec = new Security();
 const router = new Router();
 
@@ -51,7 +48,7 @@ router.get("/delInt", (ctx) => handleRequest(ctx, "/delInt"));
 router.get("/diaCPU", (ctx) => handleRequest(ctx, "/diaCPU"));
 router.get("/diaMEM", (ctx) => handleRequest(ctx, "/diaMEM"));
 
-// Security 
+// Security
 router.get("/addToken", (ctx) => handleRequest(ctx, "/addToken"));
 router.get("/getToken", (ctx) => handleRequest(ctx, "/getToken"));
 router.get("/delToken", (ctx) => handleRequest(ctx, "/delToken"));
@@ -75,140 +72,89 @@ async function handleRequest(ctx: any, path: string) {
 
 	// Parse the Parameters
 	const paramsURL = new URLSearchParams(queryString);
-	const params = {};
+	const params: any = {};
 	for (const [key, value] of paramsURL.entries()) {
 		params[key] = value;
 	}
 
-// -------------- Simple API Functions --------------
 	switch(path) {
+		case "/":
+			response.body = { message: await eventHandler.base() };
+			break;
 
-// ------- base (/) -------
-			case "/":
-				response.body = { message: await eventHandler.base() };
-				break;
+		case "/test":
+			response.body = { message: await eventHandler.test() };
+			break;
 
-// ------- test -------
-			case "/test":
-				response.body = { message: await eventHandler.test() };
-				break;
+		case "/pingDB":
+			response.body = { message: await eventHandler.pingDB() };
+			break;
 
-// ------- ping db -------
-			case "/pingDB":
-				response.body = { message: await eventHandler.pingDB() };
-				break;
-			
-// ------- ping chkp -------
-			case "/pingChkp":
-				response.body = { message: await eventHandler.pingChkp() };
-				break;
+		case "/pingChkp":
+			response.body = { message: await eventHandler.pingChkp() };
+			break;
 
+		case "/startManage":
+			response.body = { message: await eventHandler.startManage(
+				params["ip"],
+			) };
+			break;
 
+		case "/stopManage":
+			response.body = { message: await eventHandler.stopManage(
+				params["id"],
+			) };
+			break;
 
-// -------------- Appliance API Functions --------------
+		case "/getManaged":
+			response.body = { message: await eventHandler.getManaged(
+				params["getIdList"],
+			) };
+			break;
 
-// ------- start manage -------
-			case "/startManage":
-				response.body = { message: await eventHandler.startManage(
-					params["ip"],
-				) };
-				break;
+		case "/listApp":
+			response.body = { message: await eventHandler.listApp(
+				params["id"],
+			) };
+			break;
 
-// ------- stop manage -------
-			case "/stopManage":
-				response.body = { message: await eventHandler.stopManage(
-					params["id"],
-				) };
-				break;
+		case "/update":
+			response.body = { message: await eventHandler.update() };
+			break;
 
-// ------- stop manage -------
-			case "/getManaged":
-				response.body = { message: await eventHandler.getManaged(
-					params["getIdList"],
-				) };
-				break;
+		case "/addToken":
+			response.body = { message: await eventHandler.addToken(
+				params["key"],
+			)};
+			break;
 
-// ------- listApp -------
-			case "/listApp":
-	response.body = { message: await eventHandler.listApp(
-		params["id"],
-	) };
-	break;
+		case "/getToken":
+			response.body = { message: await eventHandler.getToken()};
+			break;
 
-// ------- update -------
-			case "/update":
-	response.body = { message: await eventHandler.update() };
-	break;
+		case "/delToken":
+			response.body = { message: await eventHandler.delToken()};
+			break;
 
+		case "/testToken":
+			response.body = { message: await eventHandler.testToken()};
+			break;
 
-// -------------- Security API Functions --------------
+		case "/auth":
+			response.body = { message: await eventHandler.auth(
+				params["user"],
+				params["passwd"],
+			)};
+			break;
 
-// ------- add Token -------
-			case "/addToken":
-				response.body = { message: await eventHandler.addToken(
-					params["key"],
-				)};
-				break;
-
-// ------- get token -------
-			case "/getToken":
-				response.body = { message: await eventHandler.getToken()};
-				break;
-
-// ------- delete token -------
-			case "/delToken":
-				response.body = { message: await eventHandler.delToken()};
-				break;
-	
-// ------- test token -------
-			case "/testToken":
-				response.body = { message: await eventHandler.testToken()};
-				break;
-
-// ------- test token -------
-			case "/auth":
-				response.body = { message: await eventHandler.auth(
-					params["user"],
-					params["passwd"],
-				)};
-				break;
-
-
-// ------- default -------
-			default:
-				response.body = { message: "Invalid endpoint" };
-				response.status = 404;
-				break;
-		}
+		default:
+			response.body = { message: "Invalid endpoint" };
+			response.status = 404;
+			break;
+	}
 	ctx.response.headers.set("Content-Type", "application/json");	
 	ctx.response.headers.set("Cache-Control", "no-cache");
 
 	ctx.response.body = response.body;
 	ctx.response.status = response.status || 200;
 }
-
-
-
-
-
-// // ------- addRoute-------
-// case "/addRoute":
-// 	response.body = { message: await eventHandler.getInt(
-// 		params["id"],
-// 		params["route"],
-// 	)};
-// 	break;
-
-// // ------- getRoute -------
-// case "/getRoute":
-// 	response.body = { message: await eventHandler.getInt(
-// 		params["id"],
-// 	)};
-// 	break;
-
-// // ------- delRoute -------
-// case "/delRoute":
-// response.body = { message: await eventHandler.getInt(
-// 	params["id"],
-// )};
-// break;

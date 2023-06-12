@@ -1,20 +1,20 @@
 import { crypto } from "https://deno.land/std@0.184.0/crypto/mod.ts";
-import { toHashString } from "https://deno.land/std@0.184.0/crypto/to_hash_string.ts";
-import {encode as he} from "https://deno.land/std/encoding/hex.ts";
-import {decode as hd} from "https://deno.land/std/encoding/hex.ts";
-import { AES } from "https://deno.land/x/god_crypto/aes.ts";
+import {encode as he} from "https://deno.land/std@0.190.0/encoding/hex.ts";
+import {decode as hd} from "https://deno.land/std@0.190.0/encoding/hex.ts";
 import { createHash } from "https://deno.land/std@0.119.0/hash/mod.ts";
 
-
 class Security{ 
-
-	// ------- create uuid -------
-	async createUUID() {
+	createUUID() {
 		const uuid =  crypto.randomUUID();
 		return uuid;
 	}
 
-	// ------- generate token -------
+	importDBKey(rawKey) {
+		const values = Object.values(rawKey.mk);
+		const key = Uint8Array.from(values);
+		return key
+	}
+
 	async createToken(key, passwd) {
 		const token = "MeinToken" //await this.createUUID();
 		const encryptedToken = await this.encryptAES(key, true, passwd, token)
@@ -23,7 +23,6 @@ class Security{
 		return encryptedToken;
 	}
 
-	// ------- create hash -------
 	async hash(algorithm, msg) {
 		switch(algorithm) {
 			// MD5 Hash
@@ -40,7 +39,6 @@ class Security{
 		}
 	}
 
-	// ------- generate aes key -------
 	async generateKey() {
 		const key = await crypto.subtle.generateKey(
 			{ name: "AES-CBC", length: 128 },
@@ -53,7 +51,6 @@ class Security{
 		return rawKey;
 	}
 
-	// ------- import aes key -------
 	async importKey(rawKey) {
 		const key = await crypto.subtle.importKey(
 			"raw",
@@ -66,16 +63,6 @@ class Security{
 		return key;
 	}
 
-
-	
-// ------- import aes key from database -------
-	async importDBKey(rawKey) {
-		const values = Object.values(rawKey.mk);
-		const key = Uint8Array.from(values);
-		return(key)
-	}
-
-	// ------- generate initialization vector -------
 	async generateIV(key) {
 		const encoder = new TextEncoder();
 		const md5key = await this.hash("MD5", key);
@@ -83,7 +70,6 @@ class Security{
 		return iv.subarray(0, 16); 
 	}
 
-	// ------- aes encrypt -------
 	async encryptAES(rawKey, dbKey=false, passwd, plain) {
 		const textEncoder = (string: string) => new TextEncoder().encode(string);
 		const textDecoder = (array: Uint8Array) => new TextDecoder().decode(array);
@@ -110,7 +96,6 @@ class Security{
 		return hexBytes;
 	}
 
-	// ------- aes decrypt -------
 	async decryptAES(rawKey,dbKey=false, passwd, encrypted) {
 		const te = (s:string)=>new TextEncoder().encode(s);
 		const td = (d:Uint8Array)=>new TextDecoder().decode(d);
@@ -132,14 +117,6 @@ class Security{
 		const decryptedBytes = new Uint8Array(decrypted);
 		return td(decryptedBytes);
 	}
-
-
-
-
 }
-
-
-
-// ------------- Export Security Class ------------- // 
 
 export default Security;

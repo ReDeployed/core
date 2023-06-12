@@ -2,7 +2,7 @@
 
 import DatabaseHandler from "./dbHandler.js";
 import SIMAPIHandler from "./chkpSim.js";
-import ChkpHandler from "./ChkpHandler.js"
+import ChkpHandler from "./chkpHandler.js"
 
 const db = new DatabaseHandler();
 const chkpSim = new SIMAPIHandler();
@@ -10,22 +10,18 @@ const chkHandler = new ChkpHandler();
 
 class EventHandler{
 
-// ------- base (/) -------
 	base() {
 		return "Firewall manager online 👍";
 	}
 
-// ------- test -------
 	test() {
 		return "This is the test endpoint";
 	}
 
-// ------- ping db -------
 	async pingDB() {
 		return await db.pingDB();
 	}
 
-// ------- ping chkp -------
 	async pingChkp() {
 		try {
 			return dbReturn = await db.ping()
@@ -34,10 +30,6 @@ class EventHandler{
 		}
 	}
 
-
-
-
-// ------- start manage -------
 	async startManage(ip) {
         const SID = await chkHandler.getSID(ip, "admin", "p@ssw0rd");
         const hostname = await chkHandler.getHostname(SID, ip);
@@ -53,104 +45,78 @@ class EventHandler{
 		);
 	}
 
-// ------- stop manage -------
 	async stopManage(id) {
 		await db.stopManage(id);
 		return db.delApp(id);
 	}
 
-// ------- start manage -------
 	async getManaged(getIdList) {
 		return await db.getManaged(getIdList);
 	}
 
+	async update() {
+		const appList = await db.getManaged();
+		for(const entry of appList) {
+			const id = entry.id.split(":")[1];
+			const ip = entry.ip;
+			const SID = await chkHandler.getSID(ip, "admin", "p@ssw0rd");
+			// Update
+			return await db.addApp(
+				id, 
+				ip,
+				await chkHandler.getDiagnostics(SID, ip, "cpu"),
+				await chkHandler.getDiagnostics(SID, ip, "memory"),
+				await chkHandler.getAllInterfaces(SID, ip),
+				await chkHandler.getVersion(SID, ip),
+			);
+		}
+	}
 
-
-// ------- update -------
-async update() {
-
-	const appList = await db.getManaged();
-
-	for(const entry of appList) {
-		
-		const id = entry.id.split(":")[1];
-		const ip = entry.ip;
-        const SID = await chkHandler.getSID(ip, "admin", "p@ssw0rd");
-		// Update
-		return await db.addApp(
-			id, 
-			ip,
-			await chkHandler.getDiagnostics(SID, ip, "cpu"),
-			await chkHandler.getDiagnostics(SID, ip, "memory"),
-			await chkHandler.getAllInterfaces(SID, ip),
-			await chkHandler.getVersion(SID, ip),
-		);
-    }
-}
-
-
-
-
-
-// ------- addApp -------
 	async addApp(
 		id, ip
 	) {
 		await db.startManage(id, ip);
-		await db.addApp(
+		return await db.addApp(
 			id, 
 			ip,
 			await chkpSim.showDiagnosticsCPU,
 			await chkpSim.showDiagnosticsMEM,
 			await chkpSim.showInterfaces,
-			await chkp.getVersion,
-			)
-		
+			await chkpSim.showVersion,
+		);
 	}
 
-// ------- listApp -------
 	async listApp(id) {
 		return await db.listApp(id);
 	}
 
-// ------- delApp -------
 	async delApp(
 		id,
 	) {
 		return await db.delApp(id);
 	}
 
-// ------- chgApp -------
 	async chgApp() {
 		return;
 	}
 
-// ------- add token -------
 	async addToken(key) {
 		return await db.addToken(key);
 	}
 
-// ------- get token -------
 	async getToken() {
 		return await db.getToken();
 	}
 
-// ------- delete token -------
 	async delToken() {
 		return await db.delToken();
 	}
 
-// ------- test token -------
 	async testToken() {
 		return await db.testToken();
 	}
 
-// ------- auth -------
 	async auth(user, passwd) {
-		// Check if user exists
-
-		console.log(user, passwd);
-
 		if(await db.compUser(user, passwd)) {
 			await db.addToken(passwd);
 			const token = await db.getToken();
@@ -161,49 +127,31 @@ async update() {
 		
 	}
 
-
-
-
-
-
-// ------- diaCPU -------
 	async diaCPU(id) {
 		return await db.getDiagnostics(id, "cpu");
 	}
 
-// ------- diaMEM -------
 	async diaMEM(id) {
 		return await db.getDiagnostics(id, "mem");
 	}
 
-
-
-// ------- add token -------
 	async addToken(key) {
 		return await db.addToken(key);
 	}
 
-// ------- get token -------
 	async getToken() {
 		return await db.getToken();
 	}
 
-// ------- delete token -------
 	async delToken() {
 		return await db.delToken();
 	}
 
-// ------- test token -------
 	async testToken() {
 		return await db.testToken();
 	}
 
-// ------- auth -------
 	async auth(user, passwd) {
-		// Check if user exists
-
-		console.log(user, passwd);
-
 		if(await db.compUser(user, passwd)) {
 			await db.addToken(passwd);
 			const token = await db.getToken();
@@ -213,39 +161,6 @@ async update() {
 		}
 		
 	}
-
-	async startManage(ip) {
-        await db.startManage("test", ip);
-        return await db.addApp(
-            "test", 
-            ip,
-            await chkpSim.showDiagnosticsCPU(),
-            await chkpSim.showDiagnosticsMEM(),
-            await chkpSim.showInterfaces(),
-            await chkpSim.showVersion(),
-        );
-    }
-
-	async update() {
-
-		const appList = await db.getManaged();
-	
-		for(const entry of appList) {
-			return await db.addApp(
-				"test", 
-				"1.1.1.1",
-				await chkpSim.showDiagnosticsCPU(),
-				await chkpSim.showDiagnosticsMEM(),
-				await chkpSim.showInterfaces(),
-				await chkpSim.showVersion(),
-			);
-		}
-	}
-
-
 }
-
-
-// ------------- Export Event Class ------------- // 
 
 export default EventHandler;

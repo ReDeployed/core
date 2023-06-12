@@ -1,37 +1,44 @@
-import {APIRoute} from 'astro';
+// endpoints
+const GET_ENDPOINTS = ["version", "status", "listApp"]
+const POST_ENDPOINTS = ["auth"]
 
-// API PSK
-// @TODO: Fetch this from database
-const PSK = 'testkey';
-const GET_ENDPOINTS = ["version", "status"]
-
-const ACCESS_TOKENS: {
+// in mem tokens
+let ACCESS_TOKENS: {
     [key: string]: string
 } = {};
 
-const POST_ENDPOINTS = ["auth"]
+// auth bool
+let AUTHORIZED = false;
 
-function generateAuthToken(fetched_psk : string): string | null {
-    const TIMESTAMP = Math.floor(Date.now() / 1000);
-
-    if (fetched_psk !== PSK) {
-        return null;
-    }
-
-    let token = `${PSK}${TIMESTAMP}`;
-    token = btoa(token);
-    return token;
+// API Token
+function generateUUID(): string {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        const r = (Math.random() * 16) | 0;
+        const v = c === 'x' ? r : (r & 0x3) | 0x8;
+        return v.toString(16);
+    });
 }
 
-export const post: APIRoute = async ({params, request}) => {
-    const DATA = await request.json();
+export async function post({params, request}) {
     const ID = params.id;
-    let MESSAGE = "";
+    let MESSAGE: any;
+    let DATA: any;
+
+    try {
+        DATA = await request.json();
+    } catch {
+        return new Response(null, { status: 402 });
+    }
+
+    if (DATA.key !== "test") {
+        return new Response(null, { status: 401 });
+    }
+
     if (POST_ENDPOINTS.includes(ID)) {
         switch (ID) {
             case "auth":
-                MESSAGE = generateAuthToken(DATA.key).toString();
-                ACCESS_TOKENS["key"] = MESSAGE;
+                MESSAGE = generateUUID();
+                ACCESS_TOKENS[DATA.user] = MESSAGE;
                 break;
 
             default:
@@ -39,7 +46,7 @@ export const post: APIRoute = async ({params, request}) => {
         }
         return new Response(JSON.stringify({
             type: ID,
-            msg: MESSAGE
+            msg: ACCESS_TOKENS[DATA.user]
         }), {
             status: 200,
             headers: {
@@ -56,13 +63,18 @@ export const post: APIRoute = async ({params, request}) => {
     }
 }
 
-export const get: APIRoute = async ({params, request}) => {
-    let AUTHORIZED = false;
+export async function get({params, request}) {
     const ID = params.id;
+    let ACC_TOKEN = ""
     let MESSAGE = "";
-    const ACC_TOKEN = request
+
+    try {
+        ACC_TOKEN = request
         .headers
         .get("Authorization").toString();
+    } catch {
+        return new Response(null, { status: 401 });
+    }
 
     for (const key in ACCESS_TOKENS) {
         if (ACCESS_TOKENS[key] === ACC_TOKEN) {
@@ -80,6 +92,15 @@ export const get: APIRoute = async ({params, request}) => {
             case "version":
                 MESSAGE = "v0.0.1-beta"
                 break;
+
+            case "listApp":
+                try {
+                    const response = await fetch("https://proxy:8080/listApp");
+                    MESSAGE = await response.json();
+                    MESSAGE = MESSAGE['message'];
+                } catch {
+                    MESSAGE = "[]";
+                }
 
             default:
                 break;
@@ -101,6 +122,6 @@ export const get: APIRoute = async ({params, request}) => {
                     "Content-Type": "application/json"
                 }
             })
-        } else return new Response(null, { status: 403 });
+        } else return new Response(null, { status: 401 });
     }
 }

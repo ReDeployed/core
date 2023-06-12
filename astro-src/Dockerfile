@@ -21,4 +21,4 @@ RUN npm install
 RUN npm run build
 
 # Start Astro with deno backend
-CMD ["deno", "run", "--allow-net", "--allow-read", "--allow-env", "./dist/server/entry.mjs"]
+CMD ["deno", "run", "--unsafely-ignore-certificate-errors", "--allow-net", "--allow-read", "--allow-env", "./dist/server/entry.mjs"]

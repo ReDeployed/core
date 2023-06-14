@@ -34,19 +34,29 @@
             </li>
         </ul>
     </div>
-    <h1 class="font-bold terminal-text">
-        Welcome to Re:Deploy Firewall Manager<span class="blinking-underscore">_</span >
-    </h1>
 </body>
 
 <style>
+
+
+        .left-nav ul li a i {
+            font-size: 1rem; /* Adjust the size of the icons as needed */
+            transition: all 0.3s ease-in-out;
+        }
+
+        .left-nav ul li a:hover i {
+            font-size: 1.5rem; /* Increase the size of the icons on hover */
+            color: #6737e1; /* Change the color to the desired glowing effect */
+            text-shadow: 0 0 10px #333333; /* Add a shadow effect */
+        }
+
     .left-nav {
         position: fixed;
         top: 0;
         left: 0;
         bottom: 0;
         width: 60px;
-        background-color: #1e4b82;
+        background-color: #272e3c;
         color: #fff;
         z-index: 1;
     }
@@ -73,7 +83,7 @@
     }
 
     .left-nav a:hover {
-        background-color: #1e1e1e;
+        background-color: #333333;
     }
 
     .left-nav ul ul {
@@ -109,13 +119,13 @@
     body {
         margin: 0;
         padding: 0;
-        background-color: #3b689f;
+        background-color: #1a202d;
         height: 100%;
     }
 
     body {
         min-height: 100vh;
-        background-color: #3b689f;
+        background-color: #1a202d;
         display: flex;
         flex-direction: column;
     }
@@ -136,7 +146,7 @@
 
     .terminal-text:before {
         content: "$ ~❯";
-        color: #4c4cff;
+        color: #6737e1;
         margin-right: 0.5rem;
         font-weight: bold;
     }

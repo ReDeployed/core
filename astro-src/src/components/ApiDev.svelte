@@ -9,10 +9,7 @@ const BASE_URL = "https://localhost:8080"
 
 onMount(async () => {
     try {
-        const res = await fetch(BASE_URL + "/listApp?id=" + astroProp, {
-            mode: "cors",
-            method: "GET",
-        });
+        const res = await fetch(BASE_URL + "/listApp?id=" + astroProp);
         if (res.status == 200) {
             data = await res.json();
             data = data["message"];

@@ -10,19 +10,20 @@
   let isLoading = true;
   let data = [];
   let showPopup = false;
+  const BASE_URL = "https://localhost:8080"
   const dispatch = createEventDispatcher();
 
   onMount(async () => {
     // update first
     try {
-      const res = await fetch("https://10.10.7.121:8080/update");
+      const res = await fetch(BASE_URL + "/update");
     } catch (error) {
       console.error("Error occurred while fetching data:", error);
     }
 
     // then fetch
     try {
-      const res = await fetch("https://10.10.7.121:8080/listApp", {
+      const res = await fetch(BASE_URL + "/listApp", {
         mode: "cors",
         method: "GET",
       });
@@ -39,7 +40,7 @@
   });
 
  async function startMan(ip) {
-    const res = await fetch(`https://10.10.7.121:8080/startManage?ip=${ip}`, {
+    const res = await fetch(BASE_URL + `/startManage?ip=${ip}`, {
       mode: "cors",
       method: "GET",
     });

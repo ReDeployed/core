@@ -5,10 +5,11 @@ import { onMount } from "svelte";
 let isLoading = true;
 let data = [];
 export let astroProp;
+const BASE_URL = "https://localhost:8080"
 
 onMount(async () => {
     try {
-        const res = await fetch("https://10.10.7.121:8080/listApp?id=" + astroProp, {
+        const res = await fetch(BASE_URL + "/listApp?id=" + astroProp, {
             mode: "cors",
             method: "GET",
         });

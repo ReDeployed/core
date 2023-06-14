@@ -22,14 +22,6 @@ class EventHandler{
 		return await db.pingDB();
 	}
 
-	async pingChkp() {
-		try {
-			return dbReturn = await db.ping()
-		} catch (error) {
-			return error;
-		}
-	}
-
 	async startManage(ip) {
         const SID = await chkHandler.getSID(ip, "admin", "p@ssw0rd");
         const hostname = await chkHandler.getHostname(SID, ip);
@@ -98,41 +90,6 @@ class EventHandler{
 
 	async chgApp() {
 		return;
-	}
-
-	async addToken(key) {
-		return await db.addToken(key);
-	}
-
-	async getToken() {
-		return await db.getToken();
-	}
-
-	async delToken() {
-		return await db.delToken();
-	}
-
-	async testToken() {
-		return await db.testToken();
-	}
-
-	async auth(user, passwd) {
-		if(await db.compUser(user, passwd)) {
-			await db.addToken(passwd);
-			const token = await db.getToken();
-			return token["token"];
-		} else {
-			return "Unsuccsessfull login attempt"
-		}
-		
-	}
-
-	async diaCPU(id) {
-		return await db.getDiagnostics(id, "cpu");
-	}
-
-	async diaMEM(id) {
-		return await db.getDiagnostics(id, "mem");
 	}
 
 	async addToken(key) {

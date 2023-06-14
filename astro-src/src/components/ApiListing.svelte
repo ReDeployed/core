@@ -11,7 +11,6 @@
   let data = [];
   let showPopup = false;
   const BASE_URL = "https://localhost:8080"
-  const dispatch = createEventDispatcher();
 
   onMount(async () => {
     // update first
@@ -23,10 +22,7 @@
 
     // then fetch
     try {
-      const res = await fetch(BASE_URL + "/listApp", {
-        mode: "cors",
-        method: "GET",
-      });
+      const res = await fetch(BASE_URL + "/listApp");
       if (res.status == 200) {
         data = await res.json();
       } else {
@@ -40,10 +36,7 @@
   });
 
  async function startMan(ip) {
-    const res = await fetch(BASE_URL + `/startManage?ip=${ip}`, {
-      mode: "cors",
-      method: "GET",
-    });
+    const res = await fetch(BASE_URL + "/startManage?ip=" + ip);
     if (res.status == 200) {
       console.log("Worked");
     } else {

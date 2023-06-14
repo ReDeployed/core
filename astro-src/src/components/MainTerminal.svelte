@@ -31,7 +31,7 @@ main {
     display: flex;
     align-items: center;
     height: 30px;
-    background-color: #333;
+    background-color: #272e3c;
 }
 
 .terminal-button {
@@ -67,7 +67,7 @@ main {
 
 .terminal-line::before {
     content: '$ ~ ❯ ';
-    color: #8bc34a;
+    color: #6737e1;
 }
 
 .text-terminal-line {
@@ -77,11 +77,11 @@ main {
 
 .text-terminal-line:before {
     content: attr(data-terminal-line) " ";
-    color: #444444;
+    color: #c0c0c0;
 }
 
 .loading-text {
-    color: #8bc34a;
+    color: #ffffff;
     text-shadow: 0 0 5px #8bc34a;
     animation: loading 1.5s infinite;
 }
@@ -104,6 +104,63 @@ main {
         text-shadow: 0 0 5px #8bc34a;
     }
 }
+
+    .terminal-text {
+        font-size: 3rem;
+        /* adjust font-size as needed */
+        color: #fff;
+        text-transform: uppercase;
+        letter-spacing: 0.2rem;
+        font-family: monospace;
+        padding: 0.5rem 1rem;
+        display: inline-block;
+        position: relative;
+        padding-left: 0em;
+        padding-top: 0.5em;
+        padding-bottom: 1em;
+    }
+
+    .terminal-text:before {
+        content: "$ ~❯";
+        color: #6737e1;
+        margin-right: 0.5rem;
+        font-weight: bold;
+    }
+
+    .terminal-text:after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        box-shadow: 0 0 20px #4c4cff;
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out;
+        z-index: -1;
+    }
+
+    .terminal-text:hover:after {
+        opacity: 0.3;
+    }
+
+    .blinking-underscore {
+        animation: blink 1s infinite;
+    }
+
+    
+    @keyframes blink {
+        0% {
+            opacity: 0;
+        }
+        50% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 0;
+        }
+    }
+
 </style>
 
 <main>
@@ -111,6 +168,10 @@ main {
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     </head>
+
+    <h1 class="font-bold terminal-text">
+        Welcome to Re:Deploy Firewall Manager<span class="blinking-underscore">_</span >
+    </h1>
 
     <div class="terminal">
         <div class="terminal-header">

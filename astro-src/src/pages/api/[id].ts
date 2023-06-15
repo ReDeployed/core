@@ -1,6 +1,6 @@
 // endpoints
 const GET_ENDPOINTS = ["version", "status", "listApp"]
-const POST_ENDPOINTS = ["auth", "addApp"]
+const POST_ENDPOINTS = ["auth", "addApp", "viewApp"]
 
 // in mem tokens
 let ACCESS_TOKENS: {
@@ -77,6 +77,25 @@ export async function post({params, request}) {
                 } catch {
                     MESSAGE = "[]";
                 }
+                break;
+
+            case "viewApp":
+                if ( checkAuth(request) !== true ) {
+                    return new Response(null, { status: 401 });
+                }
+                try {
+                    let devID = DATA.id
+                    const response = await fetch("https://proxy:8080/listApp?id=" + devID);
+                    if (response.status == 200) {
+                        MESSAGE = await response.json();
+                        MESSAGE = MESSAGE['message'];
+                    } else {
+                        MESSAGE = "[]"
+                    }
+                } catch {
+                    MESSAGE = "[]";
+                }
+                break;
 
             default:
                 break;

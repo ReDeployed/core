@@ -1,6 +1,6 @@
 // endpoints
 const GET_ENDPOINTS = ["version", "status", "listApp"]
-const POST_ENDPOINTS = ["auth"]
+const POST_ENDPOINTS = ["auth", "addApp", "viewApp"]
 
 // in mem tokens
 let ACCESS_TOKENS: {
@@ -19,9 +19,27 @@ function generateUUID(): string {
     });
 }
 
+// check if user is authorized
+function checkAuth(req): boolean {
+    let TOKEN: string;
+    try {
+        TOKEN = req
+        .headers
+        .get("Authorization").toString();
+    } catch {
+        return false;
+    }
+
+    for (const key in ACCESS_TOKENS) {
+        if (ACCESS_TOKENS[key] === TOKEN) {
+            return true;
+        }
+    }
+}
+
 export async function post({params, request}) {
     const ID = params.id;
-    let MESSAGE: any;
+    let MESSAGE: string;
     let DATA: any;
 
     try {
@@ -30,15 +48,53 @@ export async function post({params, request}) {
         return new Response(null, { status: 402 });
     }
 
-    if (DATA.key !== "test") {
-        return new Response(null, { status: 401 });
-    }
-
     if (POST_ENDPOINTS.includes(ID)) {
         switch (ID) {
             case "auth":
+                if (DATA.key !== "test") {
+                    return new Response(null, { status: 401 });
+                }
+                try {
                 MESSAGE = generateUUID();
                 ACCESS_TOKENS[DATA.user] = MESSAGE;
+                } catch {
+                    MESSAGE = "null";
+                }
+                break;
+
+            case "addApp":
+                if ( checkAuth(request) !== true ) {
+                    return new Response(null, { status: 401 });
+                }
+                try {
+                    let destIP = DATA.ip
+                    const response = await fetch("https://proxy:8080/startManage?ip=" + destIP);
+                    if (response.status == 200) {
+                        MESSAGE = "Success"
+                    } else {
+                        MESSAGE = "Failed"
+                    }
+                } catch {
+                    MESSAGE = "[]";
+                }
+                break;
+
+            case "viewApp":
+                if ( checkAuth(request) !== true ) {
+                    return new Response(null, { status: 401 });
+                }
+                try {
+                    let devID = DATA.id
+                    const response = await fetch("https://proxy:8080/listApp?id=" + devID);
+                    if (response.status == 200) {
+                        MESSAGE = await response.json();
+                        MESSAGE = MESSAGE['message'];
+                    } else {
+                        MESSAGE = "[]"
+                    }
+                } catch {
+                    MESSAGE = "[]";
+                }
                 break;
 
             default:
@@ -46,7 +102,7 @@ export async function post({params, request}) {
         }
         return new Response(JSON.stringify({
             type: ID,
-            msg: ACCESS_TOKENS[DATA.user]
+            msg: MESSAGE
         }), {
             status: 200,
             headers: {
@@ -54,7 +110,10 @@ export async function post({params, request}) {
             }
         })
     } else {
-        return new Response(JSON.stringify({message: "Endpoint not found!"}), {
+        return new Response(JSON.stringify({
+            type: ID,
+            msg: "Endpoint not found!"
+        }), {
             status: 404,
             headers: {
                 "Content-Type": "application/json"
@@ -65,35 +124,28 @@ export async function post({params, request}) {
 
 export async function get({params, request}) {
     const ID = params.id;
-    let ACC_TOKEN = ""
     let MESSAGE = "";
 
-    try {
-        ACC_TOKEN = request
-        .headers
-        .get("Authorization").toString();
-    } catch {
-        return new Response(null, { status: 401 });
-    }
-
-    for (const key in ACCESS_TOKENS) {
-        if (ACCESS_TOKENS[key] === ACC_TOKEN) {
-            AUTHORIZED = true;
-            break;
-        }
-    }
-
-    if (GET_ENDPOINTS.includes(ID) && AUTHORIZED) {
+    if (GET_ENDPOINTS.includes(ID)) {
         switch (ID) {
             case "status":
+                if ( checkAuth(request) !== true ) {
+                    return new Response(null, { status: 401 });
+                }
                 MESSAGE = "online"
                 break;
 
             case "version":
+                if ( checkAuth(request) !== true ) {
+                    return new Response(null, { status: 401 });
+                }
                 MESSAGE = "v0.0.1-beta"
                 break;
 
             case "listApp":
+                if ( checkAuth(request) !== true ) {
+                    return new Response(null, { status: 401 });
+                }
                 try {
                     const response = await fetch("https://proxy:8080/listApp");
                     MESSAGE = await response.json();
@@ -115,13 +167,14 @@ export async function get({params, request}) {
             }
         });
     } else {
-        if (AUTHORIZED) {
-            return new Response(JSON.stringify({message: "Endpoint not found!"}), {
-                status: 404,
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            })
-        } else return new Response(null, { status: 401 });
+        return new Response(JSON.stringify({
+            type: ID,
+            msg: "Endpoint not found!"
+        }), {
+            status: 404,
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
     }
 }
